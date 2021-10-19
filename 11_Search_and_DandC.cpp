@@ -5,11 +5,14 @@
 #include <unordered_map>
 #include <string>
 #include <algorithm>
+#include <time.h>
 using namespace std;
 
 /*
 1.Search a 2D Matrix:Integers in each row are sorted and  matrix[row][0] >= matrix[row-1][cols-1]
 2.Search a 2D Matrix II:Integers in each row and col are sorted in ascending.
+3.Merge Sort 
+4.Quick Sort 
 */
 
 // 1 Search a 2D Matrix, T:logn+logm S:1
@@ -72,6 +75,7 @@ pair<int, int> searchMatrixPos(vector<vector<int>> &matrix, int target)
         return {-1, -1};
     return binarySearchRow(matrix, rowToSearch, 0, colSize - 1, target);
 }
+
 // 2 Search a 2D Matrix II T:n+m; S:1
 bool searchMatrix(vector<vector<int>> &matrix, int target)
 {
@@ -96,3 +100,92 @@ bool searchMatrix(vector<vector<int>> &matrix, int target)
     }
     return false;
 }
+
+// 3 Merge Sort
+/* Steps
+1.break into two smaller arrays 
+2.sort both of them 
+3. Merge them
+*/
+void merge(vector<int> &nums, int s, int e)
+{
+    int mid = s + (e - s) / 2;
+    int i = s;                     //first sorted half start
+    int j = mid + 1;               // second sorted half start
+    vector<int> sorted(e - s + 1); // merged values will be stored here since we can't use the nums array
+    int k = 0;
+    while (i <= mid && j <= e)
+    {
+        if (nums[i] < nums[j])
+            sorted[k++] = nums[i++];
+        else
+            sorted[k++] = nums[j++];
+    }
+    while (i <= mid)
+        sorted[k++] = nums[i++];
+    while (j <= e)
+        sorted[k++] = nums[j++];
+    k = s;
+    for (auto v : sorted) // copy the sorted array to original array from index s to e
+        nums[k++] = v;
+}
+void mergeSort(vector<int> &nums, int s, int e)
+{
+    if (s >= e) // size is 0 or 1 already sorted
+        return;
+
+    int mid = s + (e - s) / 2;
+    mergeSort(nums, s, mid);
+    mergeSort(nums, mid + 1, e);
+    merge(nums, s, e);
+}
+//4 QuickSort
+/*
+/* 
+1.Shuffle the array (since randomized algorithm)
+2.find pivot  
+3.sort two parts created by pivot 
+*/
+class QuickSort
+{
+public:
+    vector<int> sortArray(vector<int> &nums)
+    {
+        shuffle(nums);
+        quickSort(nums, 0, nums.size() - 1);
+
+        return nums;
+    }
+    void shuffle(vector<int> &nums)
+    {
+        srand(time(NULL));
+        for (int j = nums.size() - 1; j >= 2; j--)
+        {
+            int swapWith = rand() % (j - 1);
+            swap(nums[j], nums[swapWith]);
+        }
+    }
+    int findPivot(vector<int> &nums, int s, int e)
+    {
+        int pivotValue = nums[s];
+        int i = s, j = e, k = s;
+        while (k <= j)
+        {
+            if (nums[k] == pivotValue)
+                k++;
+            else if (nums[k] > pivotValue)
+                swap(nums[k], nums[j--]);
+            else
+                swap(nums[i++], nums[k++]);
+        }
+        return i;
+    }
+    void quickSort(vector<int> &nums, int s, int e)
+    {
+        if (s >= e)
+            return;
+        int pivot = findPivot(nums, s, e);
+        quickSort(nums, s, pivot - 1);
+        quickSort(nums, pivot + 1, e);
+    }
+};
