@@ -13,6 +13,8 @@ using namespace std;
 2.Search a 2D Matrix II:Integers in each row and col are sorted in ascending.
 3.Merge Sort 
 4.Quick Sort 
+5.Order-agnostic Binary Search (Array might be ascending or descending)
+6.Koko Eating Bananas similar to Aggressive Cows
 */
 
 // 1 Search a 2D Matrix, T:logn+logm S:1
@@ -187,5 +189,72 @@ public:
         int pivot = findPivot(nums, s, e);
         quickSort(nums, s, pivot - 1);
         quickSort(nums, pivot + 1, e);
+    }
+};
+//6 Binary Search
+int binarySearch(vector<int> nums, int key)
+{
+    int n = nums.size();
+    if (n == 0)
+        return -1;
+    bool isAscending = nums[n - 1] > nums[0];
+    int s = 0, e = n - 1;
+    while (s <= e)
+    {
+        int mid = s + (e - s) / 2;
+        if (nums[mid] == key)
+            return mid;
+        //above 2 statements are common in both
+        if (isAscending)
+        {
+            if (nums[mid] > key)
+                e = mid - 1;
+            else
+                s = mid + 1;
+        }
+        else // for descending order
+        {
+            if (nums[mid] > key)
+                s = mid + 1;
+            else
+                e = mid - 1;
+        }
+    }
+    return -1;
+}
+
+//7 KokoEatingBananas
+class KokoEatingBananas
+{
+public:
+    int minEatingSpeed(vector<int> &piles, int h)
+    {
+        int minSpeed = 1;
+        int maxSpeed = piles[0];
+        for (auto v : piles)
+            maxSpeed = max(maxSpeed, v);
+        int ans = -1;
+        while (minSpeed <= maxSpeed)
+        {
+            int mid = minSpeed + (maxSpeed - minSpeed) / 2;
+            if (possible(piles, h, mid))
+            {
+                ans = mid;
+                maxSpeed = mid - 1;
+            }
+            else
+                minSpeed = mid + 1;
+        }
+        return ans;
+    }
+    bool possible(vector<int> &piles, int h, int speed)
+    {
+        for (auto v : piles)
+        {
+            h = h - ((v / speed) + (v % speed ? 1 : 0));
+            if (h < 0)
+                return false;
+        }
+        return true;
     }
 };
