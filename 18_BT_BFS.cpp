@@ -29,6 +29,7 @@ struct TreeNode
 9. Populate Next Right pointers of Tree  
     a) using queue O(n) space :LOT
     b) using constant space :LOT 
+10. Maximum Width of Binary Tree    
 */
 
 // 1 LOT
@@ -353,4 +354,32 @@ TreeNode *connectBFSQueue(TreeNode *root)
         }
     }
     return root;
+}
+//10
+int widthOfBinaryTree(TreeNode *root)
+{
+    if (!root)
+        return 0;
+    long long maxWidth = 0;
+    queue<pair<TreeNode *, unsigned long long>> q;
+    q.push({root, 0}); // we will be treating it as a Perfect BT so that every parent has 2 child even if it is null
+    // we will use heap way of solving to represent position as pos*i+1 and pos*1+2 to calculate the nodes b/w twp nodes
+    while (!q.empty())
+    {
+        int levelSize = q.size();
+        long long left = q.front().second;
+        long long right = q.front().second;
+        for (int i = 0; i < levelSize; i++)
+        {
+            auto temp = q.front();
+            q.pop();
+            right = temp.second;
+            if (temp.first->left)
+                q.push({temp.first->left, 2 * temp.second + 1});
+            if (temp.first->right)
+                q.push({temp.first->right, 2 * temp.second + 2});
+        }
+        maxWidth = (maxWidth < right - left + 1) ? right - left + 1 : maxWidth;
+    }
+    return maxWidth;
 }
