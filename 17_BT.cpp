@@ -22,8 +22,8 @@ struct TreeNode
 1. Inorder Iterative and Recursive
 2. PreOrder Iterative and Recursive
 3. PostOrder Iterative and Recursive
-4. 
-5.
+4. Tree from Preorder and Inorder
+5. Tree from Inorder and PostOrder
 6.
 7.
 8.
@@ -146,3 +146,66 @@ void postorderRec(TreeNode *root, vector<int> &postorder)
     postorder.push_back(root->val);
 }
 //4
+class PreAndIn
+{
+public:
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder)
+    {
+
+        unordered_map<int, int> inorder_map; // to get the index of element in inorder array in constant time
+        int n = preorder.size();
+
+        for (int i = 0; i < n; i++)
+            inorder_map[inorder[i]] = i;
+
+        int cur_index = 0; // this variable will traverse through the preorder array in NLR
+        return buildTreeRec(preorder, 0, n - 1, cur_index, inorder_map);
+    }
+    TreeNode *buildTreeRec(vector<int> &preorder, int s, int e, int &cur, unordered_map<int, int> &um)
+    { // [s,e] are index in inorder array for which we are constructing a tree
+        if (s > e)
+            return NULL;
+        //preorder is NLR hence construct the N first then left subtree and then right subtree
+        TreeNode *root = new TreeNode(preorder[cur]);
+        cur++; // move to next value in preorder array
+        //inorder is LNR
+        int index = um[root->val];
+        root->left = buildTreeRec(preorder, s, index - 1, cur, um); //everything left of index i.e [s,index-1] will be used to construct left subtree
+        //since leftTree is already built cur value would have reached to the index of right SubTree in PreOrder
+        root->right = buildTreeRec(preorder, index + 1, e, cur, um); //everything right of index i.e [index+1,e] will be used to construct right subtree
+
+        return root;
+    }
+};
+//5
+class PostAndIn
+{
+public:
+    TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder)
+    {
+
+        unordered_map<int, int> inorder_map;
+        int n = postorder.size();
+
+        for (int i = 0; i < n; i++)
+            inorder_map[inorder[i]] = i;
+
+        int cur_index = n - 1; //LRN hence we will start from end
+        return buildTreeRec(postorder, 0, n - 1, cur_index, inorder_map);
+    }
+    TreeNode *buildTreeRec(vector<int> &postorder, int s, int e, int &cur, unordered_map<int, int> &um)
+    {
+        //everything same logic but we will create right subtree first
+        if (s > e)
+            return NULL;
+
+        TreeNode *root = new TreeNode(postorder[cur]);
+        cur--;
+        int index = um[root->val];
+        //since we are starting from end(NRL): first node then right and then left
+        root->right = buildTreeRec(postorder, index + 1, e, cur, um);
+        root->left = buildTreeRec(postorder, s, index - 1, cur, um);
+
+        return root;
+    }
+};
