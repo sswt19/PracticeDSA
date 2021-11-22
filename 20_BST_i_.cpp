@@ -25,7 +25,8 @@ struct TreeNode
 3. Sorted array to balanced BST
 4. check BT is BST
 5. LCA in BST
-6.  
+6. Find the inorder predecessor/next smaller of a given Key in BST.
+7. Find the inorder successor/next greater of a given Key in BST.  
 */
 //1
 TreeNode *searchBST_rec(TreeNode *root, int val)
@@ -214,4 +215,60 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
             break;
     }
     return root;
+}
+//6
+//Check why go right and all left will not work
+TreeNode *getPredeccessor(TreeNode *root, int B)
+{
+    TreeNode *nextSmaller = NULL;
+    while (root)
+    {
+        if (root->val < B)
+        {
+            nextSmaller = root;
+            root = root->right; // since everything on left subtree will be smaller than root and smaller than B they can't be next smaller value
+        }
+        else
+            root = root->left; //since current value is greater or equal to B the next smaller is in left subtree
+    }
+    return nextSmaller;
+}
+//7
+TreeNode *getSuccessor(TreeNode *root, int B)
+{
+    TreeNode *nextGreater = NULL;
+    while (root)
+    {
+        if (root->val > B)
+        {
+            nextGreater = root;
+            root = root->left; // since weverything on right subtree will be greater than root and grater than B they can't be next greater value
+        }
+        else
+            root = root->right; //since current value is less or equal to B the next greater is in right subtree
+    }
+    return nextGreater;
+}
+//This one is what I thought at first
+TreeNode *getSuccessor(TreeNode *root, int val)
+{
+    TreeNode *nextGreater = NULL;
+    while (root)
+    {
+        if (root->val > val)
+        {
+            nextGreater = root;
+            root = root->left;
+        }
+        else if (root->val < val)
+            root = root->right;
+        else // if found the value it's just right child will contain the next  greater value
+        {
+            root = root->right;
+            break;
+        }
+    }
+    while (root && root->left)
+        root = root->left;
+    return root ? root : nextGreater;
 }
