@@ -30,6 +30,12 @@ Bottom Up
 5. Path from root to given node
 6. LCA
 7. Flatten BT or BT to DLL
+8. Maximum Path Sum
+*/
+/*
+Top Down: Passing down information of parent node to lower nodes
+1. Check two trees are same
+2. A tree is symmetric or 2 trees are mirror of each other
 */
 //1
 int minDepth(TreeNode *root)
@@ -232,12 +238,30 @@ TreeNode *bToDLL(TreeNode *root)
         last->right = NULL;
     return head;
 }
+//8
+class MaxPathSum
+{
+public:
+    int maxPathSum(TreeNode *root)
+    {
+        int ans = INT_MIN;
+        maxPathSumWithRoot(root, ans);
+        return ans;
+    }
+    int maxPathSumWithRoot(TreeNode *root, int &ans) //Returns max path sum which contains root
+    {
+        if (!root)
+            return 0;
+        int left = maxPathSumWithRoot(root->left, ans);
+        int right = maxPathSumWithRoot(root->right, ans);
 
-/*
-Top Down: Passing down information of parent node to lower nodes
-1. Check two trees are same
-2. A tree is symmetric or 2 trees are mirror of each other
-*/
+        int maxPathWithCurrentNode = root->val + max({left, right, 0});     //itself, left+ itself or right+itself
+        ans = max({ans, left + right + root->val, maxPathWithCurrentNode}); // set the maxPathSum
+
+        return maxPathWithCurrentNode;
+    }
+};
+
 /*
 Top Down
 */
