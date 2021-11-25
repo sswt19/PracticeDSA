@@ -23,6 +23,9 @@ struct TreeNode
 2. Floor and Ceil of a number in BST 
 3. Kth Smallest in BST
 4. Kth Largest in BST
+5. Two Sum BST
+6. BST iterator
+
 */
 // 1
 TreeNode *deleteNode(TreeNode *root, int key)
@@ -143,3 +146,84 @@ int kthLargest(TreeNode *root, int k)
     }
     return -1;
 }
+// 5
+bool findTarget(TreeNode *root, int k)
+{
+    unordered_map<int, int> um;
+    return findTarget(root, k, um);
+}
+bool findTarget(TreeNode *root, int k, unordered_map<int, int> &um)
+{
+    if (!root)
+        return false;
+    if (um.find(k - root->val) != um.end())
+        return true;
+    um[root->val] = 1;
+    return findTarget(root->left, k, um) || findTarget(root->right, k, um);
+}
+// using inorder
+bool findTargetInorder(TreeNode *root, int k)
+{
+    if (!root)
+        return false;
+    vector<int> inord;
+
+    inorder(root, inord);
+
+    //Two Sum
+    int s = 0, e = inord.size() - 1;
+
+    while (s < e)
+    {
+        int sum = inord[s] + inord[e];
+        if (sum == k)
+            return true;
+        else if (sum > k)
+            e--;
+        else
+            s++;
+    }
+    return false;
+}
+void inorder(TreeNode *root, vector<int> &inord)
+{
+    if (!root)
+        return;
+    inorder(root->left, inord);
+    inord.push_back(root->val);
+    inorder(root->right, inord);
+}
+//6 just break any of the iterative traversal into BST iterator: here inorder is used
+class BSTIterator
+{
+    stack<TreeNode *> s;
+
+public:
+    BSTIterator(TreeNode *root)
+    {
+
+        while (root) //inorder
+        {
+            s.push(root);
+            root = root->left;
+        }
+    }
+
+    int next()
+    {
+        auto temp = s.top();
+        s.pop();                  //seen left subtree and current node
+        auto right = temp->right; //seen right subtree
+        while (right)
+        {
+            s.push(right);
+            right = right->left;
+        }
+        return temp->val;
+    }
+
+    bool hasNext()
+    {
+        return !s.empty();
+    }
+};
