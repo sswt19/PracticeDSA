@@ -21,6 +21,8 @@ struct TreeNode
 /*
 1.Delete a Node in BST
 2. Floor and Ceil of a number in BST 
+3. Kth Smallest in BST
+4. Kth Largest in BST
 */
 // 1
 TreeNode *deleteNode(TreeNode *root, int key)
@@ -85,4 +87,59 @@ void floorAndCeil(TreeNode *root, int key, int &floor, int &ceil)
             root = root->right;
         }
     }
+}
+//3
+//recursive get whole list and return inorder[k-1] T:n S:n
+//iterative T:n S:h
+int kthSmallest(TreeNode *root, int k)
+{
+    //inorder iterative implementation LNR
+    stack<TreeNode *> s;
+    while (root)
+    {
+        s.push(root);
+        root = root->left;
+    }
+
+    while (!s.empty())
+    {
+        if (k == 1)
+            return s.top()->val;
+        k--; //reducing k everytime a element is seen in inorder traversal
+        auto temp = s.top();
+        s.pop();                  // nodes's left subtree done so removing the node now
+        auto right = temp->right; // now time for right subtree
+        while (right)
+        {
+            s.push(right);
+            right = right->left;
+        }
+    }
+    return -1; //wrong test size(bst)<k or k is 0
+}
+//4
+int kthLargest(TreeNode *root, int k)
+{
+    //inorder in Opposite way RNL and find kth element
+    stack<TreeNode *> s;
+    while (root)
+    {
+        s.push(root);
+        root = root->right;
+    }
+    while (!s.empty())
+    {
+        if (k == 1)
+            return s.top()->val;
+        k--;
+        auto temp = s.top();
+        s.pop();
+        auto left = temp->left;
+        while (left)
+        {
+            s.push(left);
+            left = left->right;
+        }
+    }
+    return -1;
 }
