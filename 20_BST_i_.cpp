@@ -104,6 +104,36 @@ TreeNode *sortedArrayToBST(vector<int> &nums)
 }
 
 //4
+class Solution
+{
+public:
+    bool isValidBST(TreeNode *root)
+    {
+        bool valid = true;
+        isBST(root, valid);
+        return valid;
+    }
+
+    pair<long long, long long> isBST(TreeNode *root, bool &valid)
+    {
+        if (!root)
+            return {1e14, -1e14};
+
+        auto left = isBST(root->left, valid);
+        auto right = isBST(root->right, valid);
+
+        if (left.second < root->val && right.first > root->val)
+        {
+            long long rootVal = root->val;
+            long long minV = min(rootVal, left.first);   // in case left child is null root->val should be min value
+            long long maxV = max(rootVal, right.second); //similarly for right child
+            return {minV, maxV};
+        }
+        valid = false;
+        return {-1, -1};
+    }
+};
+//my bottom up before
 class ValidBSTBottomUp
 {
 public:
