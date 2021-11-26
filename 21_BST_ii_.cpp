@@ -6,7 +6,20 @@
 #include <string>
 #include <algorithm>
 #include <list>
+#include <sstream>
 using namespace std;
+struct Node
+{
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val)
+    {
+        data = val;
+        left = right = NULL;
+    }
+};
 
 struct TreeNode
 {
@@ -25,7 +38,8 @@ struct TreeNode
 4. Kth Largest in BST
 5. Two Sum BST
 6. BST iterator
-
+7. Largest BST in BT8
+8. Serialize and deserialize Binary Tree		
 */
 // 1
 TreeNode *deleteNode(TreeNode *root, int key)
@@ -225,5 +239,127 @@ public:
     bool hasNext()
     {
         return !s.empty();
+    }
+};
+//7
+
+pair<int, pair<int, int>> largestBst(Node *root, int &Bst)
+{
+    if (!root)
+        return {0, {INT_MAX, INT_MIN}};
+    auto left = largestBst(root->left, Bst);
+    auto right = largestBst(root->right, Bst);
+
+    if (left.first != -1 && right.first != -1 && root->data < right.second.first && root->data > left.second.second)
+    {
+        int size = 1 + left.first + right.first;
+        int minV = min({root->data, left.second.first});
+        int maxV = max({root->data, right.second.second});
+        Bst = max(Bst, size);
+        return {size, {minV, maxV}};
+    }
+    return {-1, {-1, -1}};
+}
+
+// my older solution
+class ThreeValues
+{
+public:
+    int size;
+    int t_min, t_max;
+    ThreeValues() {}
+    ThreeValues(int size, int t_min, int t_max)
+    {
+        this->size = size;
+        this->t_min = t_min;
+        this->t_max = t_max;
+    }
+};
+ThreeValues largest_bst(Node *root, int &ans)
+{
+    // root has no children
+    if (root->left == NULL && root->right == NULL)
+    {
+        ans = max(ans, 1);
+        return ThreeValues{1, root->data, root->data};
+    }
+
+    // root has 1 or 2 children
+    ThreeValues left, right;
+
+    // have 2 children
+    if (root->left && root->right)
+    {
+        left = largest_bst(root->left, ans);
+        right = largest_bst(root->right, ans);
+
+        // subtrees are not bst or root will not be part of bst
+        if (left.size == -1 || right.size == -1 || (left.t_max >= root->data || right.t_min <= root->data))
+            return ThreeValues{-1, 0, 0};
+        else
+        {
+            ans = max(ans, left.size + right.size + 1);
+            return ThreeValues(left.size + right.size + 1, left.t_min, right.t_max);
+        }
+    }
+    //have only left child
+    else if (root->left)
+    {
+        left = largest_bst(root->left, ans);
+        if (left.size == -1 || left.t_max >= root->data)
+            return ThreeValues(-1, 0, 0);
+
+        ans = max(ans, left.size + 1);
+        return ThreeValues(left.size + 1, left.t_min, root->data);
+    }
+    //have only right child
+    else
+    {
+        right = largest_bst(root->right, ans);
+        if (right.size == -1 || right.t_min <= root->data)
+            return ThreeValues(-1, 0, 0);
+
+        ans = max(ans, right.size + 1);
+        return ThreeValues(right.size + 1, root->data, right.t_max);
+    }
+    return ThreeValues(-1, 0, 0);
+}
+//8
+class Codec
+{
+public:
+    // Encodes a tree to a single string.
+    string serialize(TreeNode *root)
+    {
+        //preorder traversal
+        if (!root)
+            return "#";
+        // ',' used to find when number ends
+        return to_string(root->val) + "," + serialize(root->left) + "," + serialize(root->right);
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode *deserialize(string data)
+    {
+        if (data == "#")
+            return NULL;
+
+        stringstream tree(data);
+        return deserialize_helper(tree);
+    }
+    TreeNode *deserialize_helper(stringstream &tree)
+    {
+        string temp;
+        getline(tree, temp, ',');
+
+        if (temp == "#")
+            return NULL;
+        else
+        {
+            TreeNode *root = new TreeNode(stoi(temp));
+            root->left = deserialize_helper(tree);  //first complete the left subtree since it was maid first
+            root->right = deserialize_helper(tree); // then the right subtree
+            return root;
+        }
     }
 };
