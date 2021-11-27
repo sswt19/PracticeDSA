@@ -23,6 +23,10 @@ struct ListNode
 3. Merge two Sorted Lists Constant Space
 4. Remove Nth node from end
 5. Delete a given Node when a node is given
+6. Add two numbers in LL (Number are in reverse order)
+7. Check cycle
+8. Find starting point of cycle
+9. Remove Cycle
 */
 //1
 //Recursive
@@ -122,4 +126,96 @@ void deleteNode(ListNode *node)
     auto temp = node->next;
     node->next = temp->next;
     delete temp;
+}
+//6
+//for number in left to right first reverse then add them and then reverse again
+//below the numbers are in reverse order
+ListNode *addTwoNumbers(ListNode *l1, ListNode *l2)
+{
+    ListNode dummyHead;
+    ListNode *temp = &dummyHead; // temp will point to where we have to add new node
+    int carry = 0;
+
+    while (l1 || l2) // OR beacuse if the length of integers are different we should coninue with the longer integer
+    {
+        int sum = carry;
+        if (l1)
+        {
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        if (l2)
+        {
+            sum += l2->val;
+            l2 = l2->next;
+        }
+        temp->next = new ListNode(sum % 10);
+        temp = temp->next;
+        carry = sum / 10;
+    }
+    if (carry)
+        temp->next = new ListNode(carry);
+    return dummyHead.next;
+}
+// 7
+bool hasCycle(ListNode *head)
+{
+    auto slow = head;
+    auto fast = head;
+
+    while (fast && fast->next)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast)
+            return true;
+    }
+    return false;
+}
+//8
+ListNode *detectCycleStart(ListNode *head)
+{
+    auto slow = head, fast = head;
+    while (fast && fast->next)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast)
+        {
+            //find starting point now
+            slow = head;
+            while (slow != fast)
+            {
+                slow = slow->next;
+                fast = fast->next;
+            }
+            return slow;
+        }
+    }
+    return NULL;
+}
+//9
+//Use same logic as detect start of cycle keep a pointer just before the start of cycle break it
+void removeLoop(ListNode *head)
+{
+    auto slow = head, fast = head;
+    ListNode *prev = NULL;
+    while (fast && fast->next)
+    {
+        prev = fast->next; // will always be one step behind fast
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast)
+        {
+            //find starting point now
+            slow = head;
+            while (slow != fast)
+            {
+                prev = fast; //will always be one step behind fast
+                slow = slow->next;
+                fast = fast->next;
+            }
+            prev->next = NULL; //break the cycle
+        }
+    }
 }
