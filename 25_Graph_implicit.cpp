@@ -24,7 +24,11 @@ Pattern2: DFS/BFS from each unvisited node/Island problems
 
 Pattern3: Might Require Combination of above 2 patterns
 1. Number of Closed Islands: https://leetcode.com/problems/number-of-closed-islands/
+
+Pattern4: BFS to get time/distance/other operations related to nbrs first
+1.Rotting Oranges:https://leetcode.com/problems/rotting-oranges/
 */
+
 //P0.1
 class P0Solution1
 {
@@ -218,5 +222,60 @@ public:
         int ly[] = {1, 0, -1, 0};
         for (int k = 0; k < 4; k++)
             dfs_helper(i + lx[k], j + ly[k], grid, outerBoundary);
+    }
+};
+
+//P4.1
+class P4Solution1
+{
+public:
+    int orangesRotting(vector<vector<int>> &grid)
+    {
+        int totalOrange = 0;
+        int rottenOrange = 0;
+        queue<pair<int, int>> q;
+
+        //below loop counts all oranges and adds rotten oranges to queue
+        for (int i = 0; i < grid.size(); i++)
+            for (int j = 0; j < grid[0].size(); j++)
+            {
+                if (grid[i][j] == 1)
+                    totalOrange++;
+                else if (grid[i][j] == 2)
+                {
+                    totalOrange++;
+                    q.push({i, j});
+                }
+            }
+
+        if (q.empty()) //there were no rotten oranges very important case
+            return totalOrange == rottenOrange ? 0 : -1;
+
+        int time = -1; // so that at time 0 the queue will have the starting rotten oranges
+        while (!q.empty())
+        {
+            time++;
+            int size = q.size(); //size= no of new rotten orange at every second
+            for (int i = 0; i < size; i++)
+            {
+                auto p = q.front();
+                q.pop();
+                rottenOrange++;
+                int lx[] = {1, 0, -1, 0};
+                int ly[] = {0, 1, 0, -1};
+                for (int k = 0; k < 4; k++)
+                {
+                    int x = p.first + lx[k];
+                    int y = p.second + ly[k];
+                    if (!(x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size())) //check indexes not out of bounds
+                        if (grid[x][y] == 1)
+                        {
+                            grid[x][y] = 2;
+                            q.push({x, y});
+                        }
+                }
+            }
+        }
+        return rottenOrange == totalOrange ? time : -1;
     }
 };
