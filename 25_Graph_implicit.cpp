@@ -13,13 +13,15 @@ using namespace std;
 Pattern1: Start DFS/BFS from nodes at boundary
 1. Surrounded Regions:https://leetcode.com/problems/surrounded-regions/ 
 2. Number of Enclaves:https://leetcode.com/problems/number-of-enclaves/
+
 Pattern2: DFS/BFS from each unvisited node/Island problems
 1. Number of Islands: https://leetcode.com/problems/number-of-islands/
+2. Max Area of Island: https://leetcode.com/problems/max-area-of-island/
 
 Pattern3: Might Require Combination of above 2 patterns
 1. Number of Closed Islands: https://leetcode.com/problems/number-of-closed-islands/
 */
-//1
+//P1.1
 class P1Solution1
 {
 public:
@@ -52,7 +54,7 @@ public:
             dfs_helper(i + lx[k], j + ly[k], board);
     }
 };
-
+// P2.1
 class P2Solution1
 {
 public:
@@ -83,5 +85,83 @@ public:
         int ly[] = {1, 0, -1, 0};
         for (int k = 0; k < 4; k++)
             dfs_helper(i + lx[k], j + ly[k], grid);
+    }
+};
+//P2.2
+class P2Solution2
+{
+public:
+    int maxAreaOfIsland(vector<vector<int>> &grid)
+    {
+        int maxArea = 0;
+        for (int i = 0; i < grid.size(); i++)
+            for (int j = 0; j < grid[i].size(); j++)
+                if (grid[i][j] == 1)
+                {
+                    int curArea = 0;
+                    dfs_helper(i, j, grid, curArea);
+                    maxArea = max(curArea, maxArea);
+                }
+        //changing grid to old state
+        for (int i = 0; i < grid.size(); i++)
+            for (int j = 0; j < grid[i].size(); j++)
+                if (grid[i][j] == 2)
+                    grid[i][j] = 1;
+        return maxArea;
+    }
+    void dfs_helper(int i, int j, vector<vector<int>> &grid, int &area)
+    {
+        if (i < 0 || j < 0 || i >= grid.size() || j >= grid[0].size())
+            return;
+        if (grid[i][j] == 0 || grid[i][j] == 2)
+            return;
+        area += 1;
+        grid[i][j] = 2; // changing 1 to 2 know that land has been visited
+        int lx[] = {0, 1, 0, -1};
+        int ly[] = {1, 0, -1, 0};
+        for (int k = 0; k < 4; k++)
+            dfs_helper(i + lx[k], j + ly[k], grid, area);
+    }
+};
+// P3.1
+class P3Solution1
+{
+public:
+    int closedIsland(vector<vector<int>> &grid)
+    {
+        for (int i = 0; i < grid.size(); i++)
+            for (int j = 0; j < grid[0].size(); j++)
+                if (i == 0 || j == 0 | i == grid.size() - 1 || j == grid[0].size() - 1)
+                    dfs_helper(i, j, grid, true);
+        int closedLand = 0;
+        for (int i = 0; i < grid.size(); i++)
+            for (int j = 0; j < grid[0].size(); j++)
+                if (grid[i][j] == 0)
+                {
+                    closedLand++;
+                    dfs_helper(i, j, grid, false);
+                }
+        // setting grid to its original state
+        for (int i = 0; i < grid.size(); i++)
+            for (int j = 0; j < grid[0].size(); j++)
+                if (grid[i][j] == 2 || grid[i][j] == 3)
+                    grid[i][j] = 0;
+
+        return closedLand;
+    }
+    void dfs_helper(int i, int j, vector<vector<int>> &grid, bool outerBoundary)
+    {
+        if (i < 0 || j < 0 || i >= grid.size() || j >= grid[0].size())
+            return;
+        if (grid[i][j] == 1 || grid[i][j] == 2 || grid[i][j] == 3)
+            return;
+        if (outerBoundary)
+            grid[i][j] = 2; // set 2 for lands connected to boundaries
+        else
+            grid[i][j] = 3; // set 3 for land which are part of closed land
+        int lx[] = {0, 1, 0, -1};
+        int ly[] = {1, 0, -1, 0};
+        for (int k = 0; k < 4; k++)
+            dfs_helper(i + lx[k], j + ly[k], grid, outerBoundary);
     }
 };
