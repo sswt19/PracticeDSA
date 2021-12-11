@@ -10,6 +10,10 @@
 using namespace std;
 
 /*
+Pattern0: Flood fill: do something on nodes reachable from current node
+1.Flood Fill
+2.Keys and Rooms(Not Implicit graph Problem): https://leetcode.com/problems/keys-and-rooms/
+
 Pattern1: Start DFS/BFS from nodes at boundary
 1. Surrounded Regions:https://leetcode.com/problems/surrounded-regions/ 
 2. Number of Enclaves:https://leetcode.com/problems/number-of-enclaves/
@@ -21,6 +25,57 @@ Pattern2: DFS/BFS from each unvisited node/Island problems
 Pattern3: Might Require Combination of above 2 patterns
 1. Number of Closed Islands: https://leetcode.com/problems/number-of-closed-islands/
 */
+//P0.1
+class P0Solution1
+{
+public:
+    vector<vector<int>> floodFill(vector<vector<int>> &image, int sr, int sc, int newColor)
+    {
+        int modColor = image[sr][sc];
+        if (modColor == newColor)
+            return image;
+        dfs_helper(sr, sc, image, modColor, newColor);
+        return image;
+    }
+    void dfs_helper(int i, int j, vector<vector<int>> &image, int modColor, int newColor)
+    {
+        if (i < 0 || j < 0 || i >= image.size() || j >= image[0].size())
+            return;
+        if (image[i][j] != modColor) //only if it is allowed to be modified we change it
+            return;
+        image[i][j] = newColor;
+        int lx[] = {1, 0, -1, 0};
+        int ly[] = {0, 1, 0, -1};
+        for (int k = 0; k < 4; k++)
+            dfs_helper(i + lx[k], j + ly[k], image, modColor, newColor);
+    }
+};
+//P0.2
+class P0Solution2
+{
+public:
+    bool canVisitAllRooms(vector<vector<int>> &rooms)
+    {
+        unordered_map<int, vector<int>> adjList;
+        unordered_map<int, bool> visited;
+
+        for (int i = 0; i < rooms.size(); i++)
+            for (auto nbr : rooms[i])
+                adjList[i].push_back(nbr);
+
+        dfs_helper(0, visited, adjList);
+        if (visited.size() == rooms.size())
+            return true;
+        return false;
+    }
+    void dfs_helper(int src, unordered_map<int, bool> &visited, unordered_map<int, vector<int>> adjList)
+    {
+        visited[src] = true;
+        for (auto nbr : adjList[src])
+            if (visited.find(nbr) == visited.end())
+                dfs_helper(nbr, visited, adjList);
+    }
+};
 //P1.1
 class P1Solution1
 {
