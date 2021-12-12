@@ -13,6 +13,9 @@ using namespace std;
 Pattern0: Flood fill: do something on nodes reachable from current node
 1.Flood Fill
 2.Keys and Rooms(Not Implicit graph Problem): https://leetcode.com/problems/keys-and-rooms/
+3.
+4. Find if Path Exists in Graph: https://leetcode.com/problems/find-if-path-exists-in-graph/
+
 
 Pattern1: Start DFS/BFS from nodes at boundary
 1. Surrounded Regions:https://leetcode.com/problems/surrounded-regions/ 
@@ -78,6 +81,34 @@ public:
         for (auto nbr : adjList[src])
             if (visited.find(nbr) == visited.end())
                 dfs_helper(nbr, visited, adjList);
+    }
+};
+//P0.3
+//P0.4
+class P0Solution4
+{
+public:
+    bool validPath(int n, vector<vector<int>> &edges, int start, int end)
+    {
+        unordered_map<int, vector<int>> adjList;
+        for (auto e : edges)
+        {
+            adjList[e[0]].push_back(e[1]);
+            adjList[e[1]].push_back(e[0]);
+        }
+        unordered_map<int, bool> visited;
+        return dfs_helper(start, end, adjList, visited);
+    }
+    bool dfs_helper(int s, int e, unordered_map<int, vector<int>> &adjList, unordered_map<int, bool> &visited)
+    {
+        if (s == e)
+            return true;
+        visited[s] = true;
+        for (auto nbr : adjList[s])
+            if (visited.find(nbr) == visited.end())
+                if (dfs_helper(nbr, e, adjList, visited))
+                    return true;
+        return false;
     }
 };
 //P1.1
