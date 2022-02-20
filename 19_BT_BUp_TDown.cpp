@@ -36,6 +36,7 @@ Bottom Up
 Top Down: Passing down information of parent node to lower nodes
 1. Check two trees are same
 2. A tree is symmetric or 2 trees are mirror of each other
+3. Count Good Nodes in Binary Tree
 */
 //1
 int minDepth(TreeNode *root)
@@ -291,4 +292,20 @@ bool isSym(TreeNode *root1, TreeNode *root2)
         return root1->val == root2->val && isSym(root1->left, root2->right) && isSym(root1->right, root2->left);
 
     return false;
+}
+//3 Count Good Nodes:Given a binary tree root, a node X in the tree is named good if in the path from root to X there are no nodes with a value greater than X.
+int goodNodes(TreeNode *root)
+{
+    int goodCount = 0;
+    goodNodes(root, goodCount, INT_MIN);
+    return goodCount;
+}
+void goodNodes(TreeNode *root, int &ans, int maxValue)
+{
+    if (!root)
+        return;
+    if (root->val >= maxValue)
+        ans++;
+    goodNodes(root->left, ans, max(maxValue, root->val));
+    goodNodes(root->right, ans, max(maxValue, root->val));
 }
