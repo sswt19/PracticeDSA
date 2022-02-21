@@ -9,23 +9,23 @@
 #include <sstream>
 using namespace std;
 typedef long long ll;
-/*
-1.DSU Disjoint set union: Redundant Connection(leetcode)
-2.MST
- 2.1 Prims
- 2.2 Kruskals
-Single source shortest Path
-: Undirected Unweighted Graph : BFS
 
+/*
+    1.DSU Disjoint set union: Redundant Connection(leetcode)
+    2.MST
+        2.1 Kruskals
+        2.2 Prims
+    Single source shortest Path
+    : Undirected Unweighted Graph : BFS
 */
 
 /*
-//  DSU
-Two Functions used 1. find(v): set of v, 2.union(u,v): merges sets of elements u and v
-Optimizations:
-Complexity before optimization for both functions: O(n)
-1. Path Compression: O(log n)
-2. Rank Optimization: O(1)
+    DSU
+    Two Functions used 1. find(v): set of v, 2. union(u,v): merges sets of elements u and v
+    Optimizations:
+    Complexity before optimization for both functions: O(n)
+    1. Path Compression: O(log n)
+    2. Rank Optimization: O(1)
 */
 
 class DSU
@@ -100,7 +100,8 @@ public:
         cout << endl;
     }
 };
-// 1  Redundant Connection
+
+// 1    Redundant Connection
 vector<int> findRedundantConnection(vector<vector<int>> &edges)
 {
     auto g = DSU(edges.size() + 1);
@@ -115,11 +116,12 @@ vector<int> findRedundantConnection(vector<vector<int>> &edges)
     }
     return {};
 }
-// 2.1
+// 2    MST
 /*
-2.2 Kruskal
-1. sort edges based on weight
-2. pick edge and if it does not form cycle it will be in mst (check cycles using DSU)
+    2.1 Kruskal
+    Algo:
+    1. sort edges based on weight
+    2. pick edge and if it does not form cycle it will be in mst (check cycles using DSU)
 */
 bool compare(vector<int> &a, vector<int> &b)
 {
@@ -145,6 +147,63 @@ pair<ll, vector<vector<int>>> Kruskal(int vertices, vector<vector<int>> edges)
     return {mst, mstEdges};
 }
 
+/*
+    2.2 Prims
+    Terms: MST_vertices, Active edge
+    ALgo:
+    1. Start from any source vertex. Add it to MST vertices
+    2. Add new active edges from newly added vertex in mst_vertex
+    3. Pick the smallest weight edge and process it
+    4. keep doing 2 and 3 till all vertices are in mst_vertices
+*/
+
+class Graph_Prims
+{
+    unordered_map<int, vector<pair<int, int>>> adjList; // pair is vertex,weight
+
+public:
+    void insert(int u, int v, int w)
+    {
+        adjList[u].push_back({v, w});
+        adjList[v].push_back({u, w});
+    }
+
+    pair<ll, vector<vector<int>>> prims()
+    {
+        unordered_map<int, bool> mst_vertices;
+        priority_queue<pair<int, vector<int>>, vector<pair<int, vector<int>>>, greater<pair<int, vector<int>>>> pq;
+
+        ll mst = 0;
+        vector<vector<int>> mstEdges;
+
+        int source = adjList.begin()->first; // start at any source node i.e step 1
+        pq.push({0, {source, source}});      // fake weight and edge to start and push in queue
+
+        while (!pq.empty())
+        {
+            auto edge = pq.top(); // pick smallest edge
+            pq.pop();
+            int w = edge.first;
+            int from = edge.second[0];
+            int to = edge.second[1]; // this vertex will be checked if it is in mst_vertices
+
+            if (mst_vertices.find(to) != mst_vertices.end()) // already part of MST_vertices skip this edge since not useful to us
+                continue;
+
+            // edge is useful we got new vertex for MST_vertex
+            mst_vertices[to] = true; // add it to MST_vertex
+            mst += w;
+            mstEdges.push_back({w, from, to});
+
+            // add new active edges from newly added vertex in mst_vertex.
+            for (auto nbr : adjList[to])
+                if (mst_vertices.find(nbr.first) == mst_vertices.end()) // only add edge(to,v) if v not in mst_Vertices
+                    pq.push({nbr.second, {to, nbr.first}});
+        }
+        return {mst, mstEdges};
+    }
+};
+
 class Graph
 {
     unordered_map<int, vector<int>> adjList;
@@ -156,7 +215,7 @@ public:
         if (undirected)
             adjList[v].push_back(u);
     }
-    //
+
     void SSSP_Undirected_Unweighted(int src)
     {
         queue<int> q;
