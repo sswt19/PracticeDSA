@@ -14,6 +14,7 @@ typedef long long ll;
 
 /*
 Pattern: Matrix chain multiplication
+URL: https://practice.geeksforgeeks.org/problems/matrix-chain-multiplication0303/1
 1. Brute force :    O(2^n)
 2. Top Down DP :    O(n^3)
 3. Bottom Up DP:    O(n^3)
@@ -24,7 +25,6 @@ Problems
 
 class PatternMCM
 {
-
 public:
     int mcmBF(int arr[], int i, int j)
     {

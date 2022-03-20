@@ -1,18 +1,19 @@
 #include <bits/stdc++.h>
-#include <vector>
-#include <iostream>
-#include <queue>
-#include <stack>
-#include <unordered_map>
-#include <string>
-#include <algorithm>
-#include <list>
-#include <sstream>
-#include <limits.h>
 using namespace std;
 typedef long long ll;
 
-class PatternMCM
+/*
+Pattern: 0/1 Knapsack
+URL:https://www.interviewbit.com/problems/0-1-knapsack/
+1. Brute force :    O(2^n)
+2. Top Down DP :    O(n*W)
+3. Bottom Up DP:    O(n*W)
+
+Problems
+1.
+*/
+
+class Pattern01Knapsack
 {
 
 public:
@@ -48,18 +49,18 @@ public:
 
     int knapsackBU(vector<int> &values, vector<int> &weights, int capacity)
     {
-
-        vector<vector<int>> dp(weights.size() + 1, vector<int>(capacity + 1, 0)); // base case already initialized c=0 or items.size()=0
-        for (int i = 1; i <= weights.size(); i++)
+        int N = values.size();
+        vector<vector<int>> dp(N + 1, vector<int>(capacity + 1, 0)); // base case already initialized c=0 or items.size()=0
+        for (int i = 1; i <= N; i++)
         {
             for (int c = 1; c <= capacity; c++)
             {
-                if (c - weights[i - 1] >= 0)                                                     // item (i-1)'s detail is dp[i] so access w[i-1] and v[i-1]
-                    dp[i][c] = max(dp[i - 1][c], values[i - 1] + dp[i - 1][c - weights[i - 1]]); // if we can use current item
+                if (c - weights[i - 1] >= 0)                                                 // item (i-1)'s detail is dp[i] so access w[i-1] and v[i-1]
+                    dp[i][c] = max(dp[i - 1][c], values[i - 1] + dp[i][c - weights[i - 1]]); // if we can use current item
                 else
                     dp[i][c] = dp[i - 1][c];
             }
         }
-        return dp[weights.size()][capacity];
+        return dp[N][capacity];
     }
 };
