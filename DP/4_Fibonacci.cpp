@@ -4,7 +4,7 @@ typedef long long ll;
 
 /*
 Pattern: Fibonacci
-URL: https://www.interviewbit.com/problems/0-1-knapsack/
+URL: https://leetcode.com/problems/fibonacci-number/
 1. Brute force :    O(2^n)
 2. Top Down DP :    O(n)
 3. Bottom Up DP:    O(n)
