@@ -4,7 +4,7 @@ typedef long long ll;
 
 /*
 Pattern: 0/1 Knapsack
-URL:https://www.interviewbit.com/problems/0-1-knapsack/
+URL: https://www.interviewbit.com/problems/0-1-knapsack/
 1. Brute force :    O(2^n)
 2. Top Down DP :    O(n*W)
 3. Bottom Up DP:    O(n*W)
