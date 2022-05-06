@@ -11,9 +11,28 @@ using namespace std;
 
 /*
 
+4. Kadane's|  Maximum Subarray: https://leetcode.com/problems/maximum-subarray/
 5. Dutch national flag problem |Sort array of 0’s 1’s 2’s without extra space in linear time: https://leetcode.com/problems/sort-colors/
 6. Stock buy and Sell: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 */
+
+// 4
+class Kadane
+{
+public:
+    long long maxSubArray(vector<int> &arr)
+    {
+        // long long gs = max(0, arr[0]); // if empty subarray allowed
+        long long gs = arr[0];
+        long long ls = arr[0];
+        for (int i = 1; i < arr.size(); i++)
+        {
+            ls = max(ls + arr[i], (long long)arr[i]); // ls will maintain maximum subarray sum ending at index i
+            gs = max(ls, gs);                         // gs will pick the max of ls
+        }
+        return gs;
+    }
+};
 // 5
 class DutchNationalFlag
 {
