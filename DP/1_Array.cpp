@@ -10,11 +10,45 @@
 using namespace std;
 
 /*
-
+3. Next Permutation: https://leetcode.com/problems/next-permutation/
 4. Kadane's|  Maximum Subarray: https://leetcode.com/problems/maximum-subarray/
 5. Dutch national flag problem |Sort array of 0’s 1’s 2’s without extra space in linear time: https://leetcode.com/problems/sort-colors/
 6. Stock buy and Sell: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 */
+
+// 3
+
+class NextPerm
+{
+    /*
+    1.find first a[i-1]<a[i]
+    2.the value at i-1 will be swapped
+    3.reverse from i to end, leads to sorted array because all a[i-1]>a[i] till we found the break point in step 1
+    4.traverse from i to end to find smallest value greater than a[i-1] and swap it
+    */
+public:
+    void nextPermutation(vector<int> &nums)
+    {
+        int n = nums.size();
+        int i = n - 1;
+        while (i > 0)
+        {
+            if (nums[i - 1] < nums[i]) // from i to n-1 all numbers are in decreasing order
+                break;
+            i--;
+        }
+        reverse(nums.begin() + i, nums.end()); // i to n-1 are now in increasing order
+        if (i != 0)                            // if i==0 then whole array was in decreasing order
+        {
+            for (int j = i; j < n; j++)
+                if (nums[j] > nums[i - 1])
+                {
+                    swap(nums[j], nums[i - 1]);
+                    break;
+                }
+        }
+    }
+};
 
 // 4
 class Kadane
