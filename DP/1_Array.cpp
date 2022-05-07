@@ -10,14 +10,75 @@
 using namespace std;
 
 /*
+1. Set Matrix Zeroes
+2. Pascal Triangle:
 3. Next Permutation: https://leetcode.com/problems/next-permutation/
 4. Kadane's|  Maximum Subarray: https://leetcode.com/problems/maximum-subarray/
 5. Dutch national flag problem |Sort array of 0’s 1’s 2’s without extra space in linear time: https://leetcode.com/problems/sort-colors/
 6. Stock buy and Sell: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 */
+// 1
+class Solution
+{
+public:
+    void setZeroes(vector<vector<int>> &matrix)
+    {
+        int m = matrix.size();
+        int n = matrix[0].size();
+        bool row0 = false, col0 = false;
 
+        for (int i = 0; i < m; i++)
+            if (matrix[i][0] == 0)
+                col0 = true;
+
+        for (int i = 0; i < n; i++)
+            if (matrix[0][i] == 0)
+                row0 = true;
+        for (int i = 1; i < m; i++)
+        {
+            for (int j = 1; j < n; j++)
+                if (matrix[i][j] == 0)
+                {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+        }
+        for (int i = 1; i < m; i++)
+        {
+            for (int j = 1; j < n; j++)
+                if (matrix[i][0] == 0 || matrix[0][j] == 0)
+                {
+                    matrix[i][j] = 0;
+                }
+        }
+        if (row0)
+            for (int i = 0; i < n; i++)
+                matrix[0][i] = 0;
+
+        if (col0)
+            for (int i = 0; i < m; i++)
+                matrix[i][0] = 0;
+    }
+};
+// 2
+class PascalTriangle
+{
+public:
+    vector<vector<int>> generate(int n)
+    {
+        vector<vector<int>> ans;
+        ans.push_back({1});
+        for (int i = 1; i < n; i++)
+        {
+            vector<int> level(i + 1, 1);
+            for (int j = 0; j < i - 1; j++)
+                level[j + 1] = ans[i - 1][j] + ans[i - 1][j + 1];
+            ans.push_back(level);
+        }
+        return ans;
+    }
+};
 // 3
-
 class NextPerm
 {
     /*
