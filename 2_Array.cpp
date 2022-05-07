@@ -12,7 +12,7 @@ using namespace std;
 /*
 1.
 2. Merge Overlapping Subintervals: https://leetcode.com/problems/merge-intervals/
-3. Merge two sorted Arrays without extra space
+3. Merge two sorted Arrays without extra space: https://leetcode.com/problems/merge-sorted-array/
 4.
 5.
 6.
@@ -69,5 +69,67 @@ public:
                     break;
             }
         }
+    }
+    void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
+    {
+        int k = m + n - 1; // fill from the end
+        int i = m - 1;
+        int j = n - 1;
+
+        while (i >= 0 && j >= 0)
+        {
+            if (nums2[j] > nums1[i])
+                nums1[k--] = nums2[j--];
+            else
+                nums1[k--] = nums1[i--];
+        }
+        while (i >= 0)
+            nums1[k--] = nums1[i--];
+        while (j >= 0)
+            nums1[k--] = nums2[j--];
+    }
+};
+
+// 6
+class InversionCount
+{
+public:
+    long long getInversions(long long *arr, int n)
+    {
+        long long inv = 0;
+        mergeSort(arr, 0, n - 1, inv);
+        return inv;
+    }
+    void mergeSort(long long *arr, int s, int e, long long &inv)
+    {
+        if (s >= e) // never forget to write the base case
+            return;
+        int m = s + (e - s) / 2;
+        mergeSort(arr, s, m, inv);
+        mergeSort(arr, m + 1, e, inv);
+        merge(arr, s, e, inv);
+    }
+    void merge(long long *arr, int s, int e, long long &inv)
+    {
+        int m = s + (e - s) / 2;
+        int *arrCopy = new int[e - s + 1];
+        int i = s, j = m + 1;
+        int k = 0;
+        while (i <= m && j <= e)
+        {
+            if (arr[i] <= arr[j])
+                arrCopy[k++] = arr[i++];
+            else
+            {
+                inv += m - i + 1; // this extra step is used for inversion count
+                arrCopy[k++] = arr[j++];
+            }
+        }
+        while (i <= m)
+            arrCopy[k++] = arr[i++];
+        while (j <= e)
+            arrCopy[k++] = arr[j++];
+        for (int k = 0; k <= e - s; k++)
+            arr[s + k] = arrCopy[k];
     }
 };
