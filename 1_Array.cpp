@@ -10,8 +10,8 @@
 using namespace std;
 
 /*
-1. Set Matrix Zeroes
-2. Pascal Triangle:
+1. Set Matrix Zeroes:https://leetcode.com/problems/set-matrix-zeroes/
+2. Pascal Triangle:https://leetcode.com/problems/pascals-triangle/
 3. Next Permutation: https://leetcode.com/problems/next-permutation/
 4. Kadane's|  Maximum Subarray: https://leetcode.com/problems/maximum-subarray/
 5. Dutch national flag problem |Sort array of 0’s 1’s 2’s without extra space in linear time: https://leetcode.com/problems/sort-colors/
@@ -27,13 +27,14 @@ public:
         int n = matrix[0].size();
         bool row0 = false, col0 = false;
 
+        // to check if 0th row and 0th column needs to be set to zero
         for (int i = 0; i < m; i++)
             if (matrix[i][0] == 0)
                 col0 = true;
-
         for (int i = 0; i < n; i++)
             if (matrix[0][i] == 0)
                 row0 = true;
+        // using 0th row and 0th column for storing info abou row and column which contains zero
         for (int i = 1; i < m; i++)
         {
             for (int j = 1; j < n; j++)
@@ -43,6 +44,7 @@ public:
                     matrix[0][j] = 0;
                 }
         }
+        // using 0th row and col to update whole matrix
         for (int i = 1; i < m; i++)
         {
             for (int j = 1; j < n; j++)
@@ -51,6 +53,7 @@ public:
                     matrix[i][j] = 0;
                 }
         }
+        // Setting row 0 and col 0 to 0 if the booleans are true
         if (row0)
             for (int i = 0; i < n; i++)
                 matrix[0][i] = 0;
@@ -70,9 +73,9 @@ public:
         ans.push_back({1});
         for (int i = 1; i < n; i++)
         {
-            vector<int> level(i + 1, 1);
+            vector<int> level(i + 1, 1); // n'th level will n items so i+1th level will have i+1 items
             for (int j = 0; j < i - 1; j++)
-                level[j + 1] = ans[i - 1][j] + ans[i - 1][j + 1];
+                level[j + 1] = ans[i - 1][j] + ans[i - 1][j + 1]; // using the previous level for filling curent level
             ans.push_back(level);
         }
         return ans;
