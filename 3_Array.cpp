@@ -18,7 +18,7 @@ using namespace std;
     1B. https://leetcode.com/problems/search-a-2d-matrix-ii/
         -Integers in each row are sorted in ascending from left to right.
         -Integers in each column are sorted in ascending from top to bottom.
-2.
+2. Pow(x, n) n can be negative:https://leetcode.com/problems/powx-n/
 */
 // 1
 class SearchMatrix
@@ -64,5 +64,27 @@ public:
                 rowStart++;
         }
         return false;
+    }
+};
+
+// 2
+class PowNegative
+{
+public:
+    double myPow(double x, int n)
+    {
+        if (n == 0)
+            return 1;
+
+        bool negativePow = n < 0;
+        bool oddPower = n % 2 != 0;
+
+        int n_half = abs((long long)n / 2); // To avoid overflow, if n= -2147483648,then abs(n) also = -2147483648 due to overflow
+        double value = myPow(x, n_half);
+        value = value * value;
+
+        value = oddPower ? value * x : value;
+
+        return negativePow ? 1 / value : value;
     }
 };
