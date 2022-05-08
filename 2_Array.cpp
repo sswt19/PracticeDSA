@@ -10,14 +10,35 @@
 using namespace std;
 
 /*
-1.
+1. Rotate Matrix: https://leetcode.com/problems/rotate-image/
 2. Merge Overlapping Subintervals: https://leetcode.com/problems/merge-intervals/
 3. Merge two sorted Arrays without extra space: https://leetcode.com/problems/merge-sorted-array/
 4.
 5.
-6.
+6. Inversion of Array
 */
 
+// 1
+class RotateImage
+{
+public:
+    void rotate(vector<vector<int>> &matrix)
+    {
+        transpose(matrix);
+        for (int i = 0; i < matrix.size(); i++)
+            reverse(matrix[i].begin(), matrix[i].end());
+    }
+    void transpose(vector<vector<int>> &matrix)
+    {
+        int n = matrix.size();
+        for (int t = 0; t < n; t++)
+            for (int i = 0; i < n - t; i++)
+            {
+                int j = i + t;
+                swap(matrix[i][j], matrix[j][i]);
+            }
+    }
+};
 // 2
 class MergeOvrInt
 {
