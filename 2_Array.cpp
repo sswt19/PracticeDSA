@@ -25,8 +25,8 @@ Leetcode duplicate was repeated only ones
 Correct Ques Below:
 We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has only one duplicate but it can be repeated multiple times.We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has ỏ̉nly one duplicate but it can be repeated multiple times.
 
-9.Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
-10.
+9. Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
+10. Repeat and Missing Number Array: https://www.interviewbit.com/problems/repeat-and-missing-number-array/
 11.
 
 */
@@ -176,7 +176,7 @@ public:
     static void sort(vector<int> &arr)
     {
         // Numbers are from 1 to n
-        // mapping 0->1,1->2 i.e at index 0 1 should be present
+        // Index apping 0->1,1->2 i.e at index 0 1 should be present
         int index = 0, n = arr.size();
         while (index < n)
         {
@@ -196,7 +196,7 @@ class MissingNumber
 public:
     static int findMissingNumber(vector<int> &arr)
     {
-        // mapping 0->0,1->1
+        // Index mapping 0->0,1->1
         int index = 0, n = arr.size();
         while (index < n)
         {
@@ -234,7 +234,7 @@ class AllMissingNumbers
 public:
     static vector<int> findNumbers(vector<int> &arr)
     {
-        // mapping 0->1,1->2
+        // Index mapping 0->1,1->2
         vector<int> missingNumbers;
         int index = 0, n = arr.size();
         while (index < n)
@@ -286,7 +286,7 @@ class FindAllDuplicate
 public:
     static vector<int> findNumbers(vector<int> &arr)
     {
-        // mapping 0->1,1->2
+        // Index mapping 0->1,1->2
         vector<int> duplicateNumbers;
         int index = 0, n = arr.size();
         while (index < n)
@@ -310,11 +310,13 @@ public:
     }
 };
 
+// 10
 class FindCorruptNums_OR_RepeatAndMissing
 {
 public:
     static vector<int> findNumbers(vector<int> &arr)
     {
+        // Index mapping 0->1,1->2
         int index = 0, n = arr.size();
         while (index < n)
         {
@@ -331,7 +333,7 @@ public:
         }
         for (int i = 0; i < n; i++)
             if (arr[i] != i + 1)
-                return vector<int>{arr[i], i + 1};
+                return vector<int>{arr[i], i + 1}; // arr[i] is repeated and i+1 is missing
         return vector<int>{-1, -1};
     }
 };
