@@ -20,7 +20,14 @@ Cyclic Sort
 5. CyclicSort
 6. Missing Number: https://leetcode.com/problems/missing-number/
 7. Find all Missing Numbers :https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
-8.
+8. Find the Duplicate Number:https://leetcode.com/problems/find-the-duplicate-number/
+Leetcode duplicate was repeated only ones
+Correct Ques Below:
+We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has only one duplicate but it can be repeated multiple times.We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has ỏ̉nly one duplicate but it can be repeated multiple times.
+
+9.
+10.
+11.
 
 */
 
@@ -249,11 +256,13 @@ public:
         return missingNumbers;
     }
 };
+// 8
 class FindDuplicate
 {
 public:
     static int findNumber(vector<int> &arr)
     {
+        // 0->1,1->2
         int index = 0, n = arr.size();
         while (index < n)
         {
@@ -268,9 +277,10 @@ public:
                     swap(arr[index], arr[indexOfCurrentElement]);
             }
         }
-        return arr[n - 1];
+        return arr[n - 1]; // since the numbers are b/w [1,n] and no of elements is n+1, 0->1,1->2,n-1->n, then nth index(since there are n+1 elements) will be mapped to repeating element
     }
 };
+// 9
 class FindAllDuplicate
 {
 public:
