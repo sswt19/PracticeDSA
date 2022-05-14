@@ -25,7 +25,7 @@ Leetcode duplicate was repeated only ones
 Correct Ques Below:
 We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has only one duplicate but it can be repeated multiple times.We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has ỏ̉nly one duplicate but it can be repeated multiple times.
 
-9.
+9.Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
 10.
 11.
 
@@ -286,6 +286,7 @@ class FindAllDuplicate
 public:
     static vector<int> findNumbers(vector<int> &arr)
     {
+        // mapping 0->1,1->2
         vector<int> duplicateNumbers;
         int index = 0, n = arr.size();
         while (index < n)
@@ -295,7 +296,7 @@ public:
             else
             {
                 int indexOfCurrentElement = arr[index] - 1;
-                if (arr[index] == arr[indexOfCurrentElement])
+                if (arr[index] == arr[indexOfCurrentElement]) // when both elements are same no need to swap
                     index++;
                 else
                     swap(arr[index], arr[indexOfCurrentElement]);
