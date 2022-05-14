@@ -8,14 +8,17 @@
 #include <list>
 #include <sstream>
 using namespace std;
+using ll = long long;
 
 /*
 1. Rotate Matrix: https://leetcode.com/problems/rotate-image/
 2. Merge Overlapping Subintervals: https://leetcode.com/problems/merge-intervals/
 3. Merge two sorted Arrays without extra space: https://leetcode.com/problems/merge-sorted-array/
-4.
-5.
-6. Inversion of Array
+4. Inversion of Array
+
+Cyclic Sort
+5. CyclicSort
+6. Missing Number: https://leetcode.com/problems/missing-number/
 */
 
 // 1
@@ -111,7 +114,7 @@ public:
     }
 };
 
-// 6
+// 4
 class InversionCount
 {
 public:
@@ -152,5 +155,192 @@ public:
             arrCopy[k++] = arr[j++];
         for (int k = 0; k <= e - s; k++)
             arr[s + k] = arrCopy[k];
+    }
+};
+
+// Cyclic Sort Pattern
+class CyclicSort
+{
+public:
+    static void sort(vector<int> &arr)
+    {
+        // Numbers are from 1 to n
+        // mapping 0->1,1->2 i.e at index 0 1 should be present
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index + 1) // at index i the value should be i+1, if it is there we will move ahead
+                index++;
+            else
+            {
+                int indexOfCurrentElement = arr[index] - 1; // move the element to it's correct index, 3 will be moved to 3-1
+                swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+    }
+};
+
+class MissingNumber
+{
+public:
+    static int findMissingNumber(vector<int> &arr)
+    {
+        // mapping 0->0,1->1
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index || arr[index] == n)
+                index++;
+            else
+            {
+                int indexOfCurrentElement = arr[index];
+                if (arr[index] >= n)
+                    index++;
+                swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        for (int i = 0; i < n; i++)
+            if (arr[i] != i)
+                return i; // the element is not present at it's index
+        return n;         // all element from 0 to n-1 are present
+    }
+    int missingNumberXOR_solution(vector<int> &nums)
+    {
+
+        int xorV = 0;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            xorV ^= nums[i];
+            xorV ^= (i + 1);
+        }
+        return xorV;
+    }
+};
+
+class AllMissingNumbers
+{
+public:
+    static vector<int> findNumbers(vector<int> &arr)
+    {
+        vector<int> missingNumbers;
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index + 1)
+                index++;
+            else
+            {
+                int indexOfCurrentElement = arr[index] - 1;
+                if (arr[index] == arr[indexOfCurrentElement])
+                    index++;
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        for (int i = 0; i < n; i++)
+            if (arr[i] != i + 1)
+                missingNumbers.push_back(i + 1);
+        return missingNumbers;
+    }
+};
+class FindDuplicate
+{
+public:
+    static int findNumber(vector<int> &arr)
+    {
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index + 1)
+                index++;
+            else
+            {
+                int indexOfCurrentElement = arr[index] - 1;
+                if (arr[index] == arr[indexOfCurrentElement])
+                    index++;
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        return arr[n - 1];
+    }
+};
+class FindAllDuplicate
+{
+public:
+    static vector<int> findNumbers(vector<int> &arr)
+    {
+        vector<int> duplicateNumbers;
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index + 1)
+                index++;
+            else
+            {
+                int indexOfCurrentElement = arr[index] - 1;
+                if (arr[index] == arr[indexOfCurrentElement])
+                    index++;
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        for (int i = 0; i < n; i++)
+            if (arr[i] != i + 1)
+                duplicateNumbers.push_back(arr[i]);
+
+        return duplicateNumbers;
+    }
+};
+
+class FindCorruptNums_OR_RepeatAndMissing
+{
+public:
+    static vector<int> findNumbers(vector<int> &arr)
+    {
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index + 1)
+                index++;
+            else
+            {
+                int indexOfCurrentElement = arr[index] - 1;
+                if (arr[index] == arr[indexOfCurrentElement])
+                    index++;
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        for (int i = 0; i < n; i++)
+            if (arr[i] != i + 1)
+                return vector<int>{arr[i], i + 1};
+        return vector<int>{-1, -1};
+    }
+};
+
+class Solution
+{
+public:
+    int firstMissingPositive(vector<int> &arr)
+    {
+        ll index = 0, n = arr.size();
+        while (index < n)
+        {
+            if (arr[index] == index + 1)
+                index++;
+            else
+            {
+                ll indexOfCurrentElement = (ll)arr[index] - 1;
+                if (arr[index] <= 0 || arr[index] >= n || arr[indexOfCurrentElement] == arr[index])
+                    index++;
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        for (int i = 0; i < n; i++)
+            if (arr[i] != i + 1)
+                return i + 1;
+        return n + 1;
     }
 };
