@@ -28,7 +28,7 @@ We are given an unsorted array containing ‘n+1’ numbers taken from the range
 9. Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
 10. Repeat and Missing Number Array: https://www.interviewbit.com/problems/repeat-and-missing-number-array/
 11. First Missing Positive: https://leetcode.com/problems/first-missing-positive/
-12.
+12. Find the First K Missing Positive Numbers: https://leetcode.com/problems/kth-missing-positive-number/
 
 */
 
@@ -366,5 +366,47 @@ public:
             if (arr[i] != i + 1)
                 return i + 1;
         return n + 1; // if 1 to n are present the n+1 is the missing one
+    }
+};
+// 12
+class FirstKMissingPositive
+{
+public:
+    vector<int> findNumbers(vector<int> &arr, int k)
+    {
+        vector<int> missingNumbers;
+        ll index = 0, n = arr.size();
+        unordered_map<int, bool> mark;
+        while (index < n)
+        {
+            if (arr[index] == index + 1)
+                index++;
+            else
+            {
+                ll indexOfCurrentElement = (ll)arr[index] - 1;
+                if (arr[index] <= 0 || arr[index] > n || arr[indexOfCurrentElement] == arr[index])
+                    index++;
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            if (arr[i] != i + 1 && missingNumbers.size() < k)
+                missingNumbers.push_back(i + 1);
+            if (arr[i] > 0)
+                mark[arr[i]] = true;
+        }
+        if (missingNumbers.size() == 0)
+            missingNumbers.push_back(n + 1);
+        while (missingNumbers.size() < k)
+        {
+            int num = missingNumbers.back() + 1;
+            while (mark.find(num) != mark.end())
+                num++;
+            missingNumbers.push_back(num);
+        }
+        return missingNumbers;
     }
 };
