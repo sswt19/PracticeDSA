@@ -27,7 +27,8 @@ We are given an unsorted array containing ‘n+1’ numbers taken from the range
 
 9. Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
 10. Repeat and Missing Number Array: https://www.interviewbit.com/problems/repeat-and-missing-number-array/
-11.
+11. First Missing Positive: https://leetcode.com/problems/first-missing-positive/
+12.
 
 */
 
@@ -338,11 +339,15 @@ public:
     }
 };
 
-class Solution
+// 11
+class FirstSmallestMissingPositive
 {
 public:
-    int firstMissingPositive(vector<int> &arr)
+    static int findNumber(vector<int> &arr)
     {
+        // The Smallest Missing Positive will be in [1,n+1] n+1 when the array contains 1 to n numbers.
+        // We will try to place the numbers on their correct indices and ignore all numbers that are out of the range of the array (i.e.,0, all negative numbers  and all numbers greater than the length of the array).
+        // Index mapping 0->1,1->2
         ll index = 0, n = arr.size();
         while (index < n)
         {
@@ -351,15 +356,15 @@ public:
             else
             {
                 ll indexOfCurrentElement = (ll)arr[index] - 1;
-                if (arr[index] <= 0 || arr[index] >= n || arr[indexOfCurrentElement] == arr[index])
+                if (arr[index] <= 0 || arr[index] > n || arr[indexOfCurrentElement] == arr[index]) // we will skip if num is <=0 or >n or equal to the number which we will be swapping with
                     index++;
                 else
                     swap(arr[index], arr[indexOfCurrentElement]);
             }
         }
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) // find first smalles missing number from 1 to n
             if (arr[i] != i + 1)
                 return i + 1;
-        return n + 1;
+        return n + 1; // if 1 to n are present the n+1 is the missing one
     }
 };
