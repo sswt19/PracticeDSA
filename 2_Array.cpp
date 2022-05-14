@@ -19,6 +19,9 @@ using ll = long long;
 Cyclic Sort
 5. CyclicSort
 6. Missing Number: https://leetcode.com/problems/missing-number/
+7. Find all Missing Numbers :https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
+8.
+
 */
 
 // 1
@@ -159,6 +162,7 @@ public:
 };
 
 // Cyclic Sort Pattern
+// 5
 class CyclicSort
 {
 public:
@@ -179,7 +183,7 @@ public:
         }
     }
 };
-
+// 6
 class MissingNumber
 {
 public:
@@ -204,6 +208,7 @@ public:
                 return i; // the element is not present at it's index
         return n;         // all element from 0 to n-1 are present
     }
+    // XOR method
     int missingNumberXOR_solution(vector<int> &nums)
     {
 
@@ -216,12 +221,13 @@ public:
         return xorV;
     }
 };
-
+// 7
 class AllMissingNumbers
 {
 public:
     static vector<int> findNumbers(vector<int> &arr)
     {
+        // mapping 0->1,1->2
         vector<int> missingNumbers;
         int index = 0, n = arr.size();
         while (index < n)
@@ -231,7 +237,7 @@ public:
             else
             {
                 int indexOfCurrentElement = arr[index] - 1;
-                if (arr[index] == arr[indexOfCurrentElement])
+                if (arr[index] == arr[indexOfCurrentElement]) // no need to swap since the number at the position to be swaped is same
                     index++;
                 else
                     swap(arr[index], arr[indexOfCurrentElement]);
