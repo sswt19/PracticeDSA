@@ -93,6 +93,8 @@ public:
 // 3
 class MajorityElement
 {
+    // Boyer-Moore Majority Voting Algorithm
+
 public:
     int majorityElement(vector<int> &nums)
     {
@@ -117,5 +119,55 @@ public:
             return countMajElement > (nums.size() / 2) ? majElement : INT_MIN;
         */
         return majElement; // if given in the ques majority element always exist
+    }
+};
+class MajorityElement2
+{
+public:
+    vector<int> majorityElement(vector<int> &nums)
+    {
+        // there can be only two elements which are >n/3
+        // majority element will be left after forming triplets  example 1,2,3,1,2,3,1,3
+        vector<int> majE;
+        int cand1 = -1, cand2 = -1;
+        int count1 = 0, count2 = 0;
+
+        for (auto v : nums)
+        {
+            if (v == cand1)
+                count1++;
+            else if (v == cand2)
+                count2++;
+            else if (count1 == 0)
+            {
+                cand1 = v;
+                count1 = 1;
+            }
+            else if (count2 == 0)
+            {
+                cand2 = v;
+                count2 = 1;
+            }
+            else
+            {
+                count1--;
+                count2--;
+            }
+        }
+        // second pass to check if element is majority
+        count1 = count2 = 0;
+        for (auto v : nums)
+        {
+            if (v == cand1)
+                count1++;
+            else if (v == cand2)
+                count2++;
+        }
+        if (count1 > nums.size() / 3)
+            majE.push_back(cand1);
+        if (count2 > nums.size() / 3)
+            majE.push_back(cand2);
+
+        return majE;
     }
 };
