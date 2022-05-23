@@ -34,7 +34,7 @@ public:
         for (int i = 0; i < n; i++)
             if (matrix[0][i] == 0)
                 row0 = true;
-        // using 0th row and 0th column for storing info abou row and column which contains zero
+        // using 0th row for column and 0th column for row  to store info about zero
         for (int i = 1; i < m; i++)
         {
             for (int j = 1; j < n; j++)
@@ -44,15 +44,12 @@ public:
                     matrix[0][j] = 0;
                 }
         }
-        // using 0th row and col to update whole matrix
+        // using 0th row and 0th col to update whole matrix
         for (int i = 1; i < m; i++)
-        {
             for (int j = 1; j < n; j++)
                 if (matrix[i][0] == 0 || matrix[0][j] == 0)
-                {
                     matrix[i][j] = 0;
-                }
-        }
+
         // Setting row 0 and col 0 to 0 if the booleans are true
         if (row0)
             for (int i = 0; i < n; i++)
@@ -69,16 +66,16 @@ class PascalTriangle
 public:
     vector<vector<int>> generate(int n)
     {
-        vector<vector<int>> ans;
-        ans.push_back({1});
+        vector<vector<int>> pascalT;
+        pascalT.push_back({1});
         for (int i = 1; i < n; i++)
         {
             vector<int> level(i + 1, 1); // n'th level will n items so i+1th level will have i+1 items
-            for (int j = 0; j < i - 1; j++)
-                level[j + 1] = ans[i - 1][j] + ans[i - 1][j + 1]; // using the previous level for filling curent level
-            ans.push_back(level);
+            for (int j = 1; j < i; j++)
+                level[j] = pascalT[i - 1][j - 1] + pascalT[i - 1][j]; // using the previous level for filling curent level
+            pascalT.push_back(level);
         }
-        return ans;
+        return pascalT;
     }
 };
 // 3

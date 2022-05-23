@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <list>
 #include <sstream>
+#include <climits>
 using namespace std;
 
 /*
@@ -19,6 +20,7 @@ using namespace std;
         -Integers in each row are sorted in ascending from left to right.
         -Integers in each column are sorted in ascending from top to bottom.
 2. Pow(x, n) n can be negative:https://leetcode.com/problems/powx-n/
+3. Majority Element:https://leetcode.com/problems/majority-element/
 */
 // 1
 class SearchMatrix
@@ -86,5 +88,34 @@ public:
         value = oddPower ? value * x : value;
 
         return negativePow ? 1 / value : value;
+    }
+};
+// 3
+class MajorityElement
+{
+public:
+    int majorityElement(vector<int> &nums)
+    {
+        int count = 1;
+        int majElement = nums[0];
+        for (int i = 1; i < nums.size(); i++)
+        {
+            if (count == 0) // till (i-1)th index no majority element whenever count is 0 we mark a new majority element
+                majElement = nums[i];
+            if (majElement == nums[i]) // if matches increase count
+                count++;
+            else // decrease count and if it becomes then the next index will become majority element
+                count--;
+        }
+
+        // This second pass is neded when it is not guranteed that majority element exists. For example [5,5,7,7,1]: our code will return 1 as majority element
+        /*
+            int countMajElement = 0;
+            for (auto v : nums)
+               if (majElement == v)
+                   countMajElement++;
+            return countMajElement > (nums.size() / 2) ? majElement : INT_MIN;
+        */
+        return majElement; // if given in the ques majority element always exist
     }
 };
