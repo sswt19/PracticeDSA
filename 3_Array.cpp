@@ -21,6 +21,7 @@ using namespace std;
         -Integers in each column are sorted in ascending from top to bottom.
 2. Pow(x, n) n can be negative:https://leetcode.com/problems/powx-n/
 3. Majority Element:https://leetcode.com/problems/majority-element/
+4. Majority Element 2: https://leetcode.com/problems/majority-element-ii/
 */
 // 1
 class SearchMatrix
@@ -121,6 +122,7 @@ public:
         return majElement; // if given in the ques majority element always exist
     }
 };
+// 4
 class MajorityElement2
 {
 public:
