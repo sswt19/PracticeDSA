@@ -64,8 +64,7 @@ int minSubArrayLen(int target, vector<int> &nums)
     return minWin == INT_MAX ? 0 : minWin; // if there was no window found return 0
 }
 
-// 3
-
+// 3. Same Logic as 2nd, we will keep adding till the window's um.size() <= k  and then keep removing from left to find max window size possible until um.size()>k
 int lengthOfLongestSubstringKDistinct(string str, int k)
 {
     int maxL = 0;
@@ -75,9 +74,10 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
     while (winE < str.size())
     {
         // Add to unordered_map to know the map size
-        if (um.find(str[winE]) == um.end())
+        // use the new element who is part of window now
+        if (um.find(str[winE]) == um.end()) // new character
             um[str[winE]] = 1;
-        else
+        else // already exists
             um[str[winE]] += 1;
 
         while (um.size() > k) // we need to remove from left to make total types of characters = k
@@ -87,9 +87,9 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
                 um.erase(str[winS]);
             winS++;
         }
+        // now the different types of character in string are <=k
         maxL = max(maxL, winE - winS + 1);
-
-        winE++;
+        winE++; // increase the window
     }
     return maxL;
 }
