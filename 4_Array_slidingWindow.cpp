@@ -19,6 +19,8 @@ Sliding Window pattern:
 2. Minimum Size Subarray Sum:https://leetcode.com/problems/minimum-size-subarray-sum/
 3. Longest Substring with At Most K Distinct Characters: https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
 4. Fruit Into Baskets:https://leetcode.com/problems/fruit-into-baskets/
+5. Longest Substring Without Repeating Characters: https://leetcode.com/problems/longest-substring-without-repeating-characters/
+6.
 */
 // 1.
 class Solution
@@ -31,13 +33,14 @@ public:
         while (winEnd < nums.size())
         {
             winSum += nums[winEnd];         // use the new element who is part of window now
-            if (winEnd - winStart + 1 == k) // found a window
+            if (winEnd - winStart + 1 == k) // found a window of required size
             {
                 maxAvg = max(maxAvg, winSum / (double)k); // process the window
-                winSum -= nums[winStart];                 // remove the start of window content
-                winStart++;                               // move the start of window ahead
+                // reduce the window size from left
+                winSum -= nums[winStart]; // remove the start of window content
+                winStart++;               // move the start of window ahead
             }
-            winEnd++; // move the right side of window
+            winEnd++; // increase the window size from right
         }
         return maxAvg;
     }
@@ -128,6 +131,39 @@ public:
             }
             maxL = max(maxL, winE - winS + 1);
 
+            winE++;
+        }
+        return maxL;
+    }
+};
+
+// 5
+class Solution
+{
+public:
+    int lengthOfLongestSubstring(string str)
+    {
+        int maxL = 0;
+        int winS = 0, winE = 0;
+        unordered_map<int, int> um;
+
+        while (winE < str.size())
+        {
+            // Add to unordered_map to know the map size
+            if (um.find(str[winE]) == um.end())
+                um[str[winE]] = 1;
+            else
+            {
+                um[str[winE]] += 1;
+                while (um[str[winE]] != 1) // we need to removing from left till count becomes 1
+                {
+                    um[str[winS]] -= 1;
+                    if (um[str[winS]] == 0) // key does not exist delete it
+                        um.erase(str[winS]);
+                    winS++;
+                }
+            }
+            maxL = max(maxL, winE - winS + 1); // now the window has only unique characters
             winE++;
         }
         return maxL;
