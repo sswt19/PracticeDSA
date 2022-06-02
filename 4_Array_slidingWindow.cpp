@@ -122,35 +122,32 @@ int totalFruit(vector<int> &fruits)
     return maxL;
 }
 
-// 5
-class Solution
+// 5. Same logic as 3rd. increase the window for new character, if character already exists shrink from left till it's count becomes 1
+int lengthOfLongestSubstring(string str)
 {
-public:
-    int lengthOfLongestSubstring(string str)
-    {
-        int maxL = 0;
-        int winS = 0, winE = 0;
-        unordered_map<int, int> um;
+    int maxL = 0;
+    int winS = 0, winE = 0;
+    unordered_map<int, int> um;
 
-        while (winE < str.size())
+    while (winE < str.size())
+    {
+        // Add to unordered_map to know the map size
+        if (um.find(str[winE]) == um.end()) // new character
+            um[str[winE]] = 1;
+        else // already exists shrink from left
         {
-            // Add to unordered_map to know the map size
-            if (um.find(str[winE]) == um.end())
-                um[str[winE]] = 1;
-            else
+            um[str[winE]] += 1;
+            while (um[str[winE]] != 1) // we need to removing from left till the character's count becomes 1
             {
-                um[str[winE]] += 1;
-                while (um[str[winE]] != 1) // we need to removing from left till count becomes 1
-                {
-                    um[str[winS]] -= 1;
-                    if (um[str[winS]] == 0) // key does not exist delete it
-                        um.erase(str[winS]);
-                    winS++;
-                }
+                um[str[winS]] -= 1;
+                if (um[str[winS]] == 0) // key does not exist delete it
+                    um.erase(str[winS]);
+                winS++;
             }
-            maxL = max(maxL, winE - winS + 1); // now the window has only unique characters
-            winE++;
         }
-        return maxL;
+        // now the window has only unique characters
+        maxL = max(maxL, winE - winS + 1);
+        winE++;
     }
-};
+    return maxL;
+}
