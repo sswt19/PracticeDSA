@@ -83,7 +83,7 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
         while (um.size() > k) // we need to remove from left to make total types of characters = k
         {
             um[str[winS]] -= 1;
-            if (um[str[winS]] == 0) // key does not exist delete it
+            if (um[str[winS]] == 0) // key does not exist in the window anymore delete it
                 um.erase(str[winS]);
             winS++;
         }
@@ -94,39 +94,33 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
     return maxL;
 }
 
-// 4
-class Solution
+// 4. Same as 3rd Longest Substring with K Distinct Characters where K=2.
+int totalFruit(vector<int> &fruits)
 {
-public:
-    int totalFruit(vector<int> &fruits)
+    int k = 2;
+    int maxL = 0;
+    int winS = 0, winE = 0;
+    unordered_map<int, int> um;
+
+    while (winE < fruits.size())
     {
-        int k = 2;
-        int maxL = 0;
-        int winS = 0, winE = 0;
-        unordered_map<int, int> um;
+        if (um.find(fruits[winE]) == um.end())
+            um[fruits[winE]] = 1;
+        else
+            um[fruits[winE]] += 1;
 
-        while (winE < fruits.size())
+        while (um.size() > k)
         {
-            // Add to unordered_map to know the map size
-            if (um.find(fruits[winE]) == um.end())
-                um[fruits[winE]] = 1;
-            else
-                um[fruits[winE]] += 1;
-
-            while (um.size() > k) // we need to remove from left to make total types of characters = k
-            {
-                um[fruits[winS]] -= 1;
-                if (um[fruits[winS]] == 0) // key does not exist delete it
-                    um.erase(fruits[winS]);
-                winS++;
-            }
-            maxL = max(maxL, winE - winS + 1);
-
-            winE++;
+            um[fruits[winS]] -= 1;
+            if (um[fruits[winS]] == 0)
+                um.erase(fruits[winS]);
+            winS++;
         }
-        return maxL;
+        maxL = max(maxL, winE - winS + 1);
+        winE++;
     }
-};
+    return maxL;
+}
 
 // 5
 class Solution
