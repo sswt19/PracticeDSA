@@ -9,6 +9,7 @@
 using namespace std;
 
 /*
+
 1. Greedy coin change
 2. Fractional Knapsack
     :https://practice.geeksforgeeks.org/problems/fractional-knapsack-1587115620/1
@@ -19,8 +20,11 @@ using namespace std;
     :https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1#
 5. Interal Covering with min points
     :https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/
-5.
+6 Merge Overlapping Subintervals
+    :https://leetcode.com/problems/merge-intervals/
+
 */
+
 // 1 coin change Greedy will not work always, DP will always works
 void mincoinChange(int amount, vector<int> &coins)
 {
@@ -136,6 +140,7 @@ int findMinArrowShots(vector<vector<int>> &points)
     return ans.size();
 }
 
+// 6 Merge Intervals
 vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
 {
     sort(intervals.begin(), intervals.end(), [](vector<int> const &a, vector<int> const &b)
@@ -145,19 +150,19 @@ vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
     auto last = intervals[0];
     for (int i = 1; i < intervals.size(); i++)
     {
-        if (last[1] < intervals[i][0])
+        if (last[1] < intervals[i][0]) // no overlap, one independent interval found
         {
             merged.push_back(last);
             last = intervals[i];
         }
-        else
-            last[1] = max(last[1], intervals[i][1]);
+        else                                         // there is a overlap merge them
+            last[1] = max(last[1], intervals[i][1]); // pick the max end time
     }
-    merged.push_back(last);
+    merged.push_back(last); // push the last remaining interval
     return merged;
 }
 
-// 6 Job Scheduling
+// 7 Job Scheduling
 // url:https : //practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1#
 struct Job
 {

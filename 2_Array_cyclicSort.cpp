@@ -11,30 +11,40 @@ using namespace std;
 using ll = long long;
 
 /*
-1. Rotate Matrix: https://leetcode.com/problems/rotate-image/
-2. Merge Overlapping Subintervals: https://leetcode.com/problems/merge-intervals/
-3. Merge two sorted Arrays without extra space: https://leetcode.com/problems/merge-sorted-array/
+1. Rotate Matrix
+    :https://leetcode.com/problems/rotate-image/
+2. Merge Overlapping Subintervals
+    :https://leetcode.com/problems/merge-intervals/
+3. Merge two sorted Arrays without extra space
+    :https://leetcode.com/problems/merge-sorted-array/
 4. Inversion of Array
 
 Cyclic Sort:
 ****************************************************************************************************************
-Always try to see if we can solve it using XOR even if it is solvable by cyclic sort
-Most Questions will be like numbers from 0/1 to n-1/n/n+1 and need to use constant space
+-> Always try to see if we can solve it using XOR even if it is solvable by cyclic sort
+-> Most Questions will be like there are n/n+1 numbers in the range from 0/1 to n-1/n/n+1 and need to use constant space
 ****************************************************************************************************************
 5. CyclicSort
-6. Missing Number: https://leetcode.com/problems/missing-number/
-7. Find all Missing Numbers :https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
-8. Find the Duplicate Number:https://leetcode.com/problems/find-the-duplicate-number/
+6. Missing Number
+    :https://leetcode.com/problems/missing-number/
+7. Find all Missing Numbers
+    :https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
+8. Find the Duplicate Number
+    :https://leetcode.com/problems/find-the-duplicate-number/
         Leetcode duplicate was repeated only ones
         Correct Ques Below:
             We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’.
             The array has only one duplicate but it can be repeated multiple times.
             We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’.
             The array has ỏ̉nly one duplicate but it can be repeated multiple times.
-9. Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
-10. Repeat and Missing Number Array: https://www.interviewbit.com/problems/repeat-and-missing-number-array/
-11. First Missing Positive: https://leetcode.com/problems/first-missing-positive/
-12. Find the First K Missing Positive Numbers: https://leetcode.com/problems/kth-missing-positive-number/
+9. Find All Duplicates in an Array
+    :https://leetcode.com/problems/find-all-duplicates-in-an-array/
+10. Repeat and Missing Number Array
+    :https://www.interviewbit.com/problems/repeat-and-missing-number-array/
+11. First Missing Positive
+    :https://leetcode.com/problems/first-missing-positive/
+12. Find the First K Missing Positive Numbers
+    :https://leetcode.com/problems/kth-missing-positive-number/
 
 */
 
