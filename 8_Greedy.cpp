@@ -20,9 +20,10 @@ using namespace std;
     :https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1#
 5. Interal Covering with min points
     :https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/
-6 Merge Overlapping Subintervals
+6. Merge Overlapping Subintervals
     :https://leetcode.com/problems/merge-intervals/
-
+7. Insert Interval
+    :https://leetcode.com/problems/insert-interval/
 */
 
 // 1 coin change Greedy will not work always, DP will always works
@@ -161,8 +162,35 @@ vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
     merged.push_back(last); // push the last remaining interval
     return merged;
 }
+// 7 Insert Interval
+vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval)
+{
+    vector<vector<int>> merged;
 
-// 7 Job Scheduling
+    int i = 0; // to keep track of which interval we are processing right now
+    while (i < intervals.size() && intervals[i][1] < newInterval[0])
+    {
+        merged.push_back(intervals[i]); // push interval if  start of new interval> end of interval we are processing
+        i++;
+    }
+    // we might have encountered an end time which is greater than start of new interval so new interval might have an overlap
+    while (i < intervals.size() && intervals[i][0] <= newInterval[1]) // start of current interval <= end of new interval there is overlap
+    {
+        newInterval[0] = min(newInterval[0], intervals[i][0]);
+        newInterval[1] = max(newInterval[1], intervals[i][1]);
+        i++;
+    }
+    merged.push_back(newInterval);
+
+    while (i < intervals.size())
+    {
+        merged.push_back(intervals[i]);
+        i++;
+    }
+    return merged;
+}
+
+//  Job Scheduling
 // url:https : //practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1#
 struct Job
 {
