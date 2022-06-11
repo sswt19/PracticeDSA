@@ -16,15 +16,21 @@ using ll = long long;
 3. Merge two sorted Arrays without extra space: https://leetcode.com/problems/merge-sorted-array/
 4. Inversion of Array
 
-Cyclic Sort
+Cyclic Sort:
+****************************************************************************************************************
+Always try to see if we can solve it using XOR even if it is solvable by cyclic sort
+Most Questions will be like numbers from 0/1 to n-1/n/n+1 and need to use constant space
+****************************************************************************************************************
 5. CyclicSort
 6. Missing Number: https://leetcode.com/problems/missing-number/
 7. Find all Missing Numbers :https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
 8. Find the Duplicate Number:https://leetcode.com/problems/find-the-duplicate-number/
-Leetcode duplicate was repeated only ones
-Correct Ques Below:
-We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has only one duplicate but it can be repeated multiple times.We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’. The array has ỏ̉nly one duplicate but it can be repeated multiple times.
-
+        Leetcode duplicate was repeated only ones
+        Correct Ques Below:
+            We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’.
+            The array has only one duplicate but it can be repeated multiple times.
+            We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’.
+            The array has ỏ̉nly one duplicate but it can be repeated multiple times.
 9. Find All Duplicates in an Array: https://leetcode.com/problems/find-all-duplicates-in-an-array/
 10. Repeat and Missing Number Array: https://www.interviewbit.com/problems/repeat-and-missing-number-array/
 11. First Missing Positive: https://leetcode.com/problems/first-missing-positive/
@@ -170,6 +176,34 @@ public:
 };
 
 // Cyclic Sort Pattern
+class CyclicSortTemplate
+{
+public:
+    static int findNumber(vector<int> &arr)
+    {
+
+        int index = 0, n = arr.size();
+        while (index < n)
+        {
+            // Check element is already at correct place if yes move ahead
+            //  if (arr[index] == index) when mapping is like 2->2, n->n
+            if (arr[index] == index + 1) // 0->1,1->2, ith index will have i+1 value
+                index++;
+            else // the current element is not at it's correct place
+            {
+                // int indexOfCurrentElement = arr[index] // for 2->2, n->n
+                int indexOfCurrentElement = arr[index] - 1;   // find what is the correct place for current element
+                if (arr[index] == arr[indexOfCurrentElement]) // cases where we might have to skip swapping
+                    index++;
+                else // swap to correct place
+                    swap(arr[index], arr[indexOfCurrentElement]);
+            }
+        }
+        // some further processing if needed
+        return arr[n - 1];
+    }
+};
+
 // 5
 class CyclicSort
 {
@@ -278,7 +312,8 @@ public:
                     swap(arr[index], arr[indexOfCurrentElement]);
             }
         }
-        return arr[n - 1]; // since the numbers are b/w [1,n] and no of elements is n+1, 0->1,1->2,n-1->n, then nth index(since there are n+1 elements) will be mapped to repeating element
+        // since the numbers are b/w [1,n] and no of elements is n+1, 0->1,1->2,n-1->n, then nth index(since there are n+1 elements) will be mapped to repeating element̉̉
+        return arr[n - 1];
     }
 };
 // 9
@@ -326,7 +361,7 @@ public:
             else
             {
                 int indexOfCurrentElement = arr[index] - 1;
-                if (arr[index] == arr[indexOfCurrentElement])
+                if (arr[index] == arr[indexOfCurrentElement]) // when both elements are same no need to swap
                     index++;
                 else
                     swap(arr[index], arr[indexOfCurrentElement]);
@@ -372,7 +407,7 @@ public:
 class FirstKMissingPositive
 {
 public:
-    vector<int> findNumbers(vector<int> &arr, int k)
+    int findKthPositive(vector<int> &arr, int k)
     {
         vector<int> missingNumbers;
         ll index = 0, n = arr.size();
@@ -395,18 +430,17 @@ public:
         {
             if (arr[i] != i + 1 && missingNumbers.size() < k)
                 missingNumbers.push_back(i + 1);
-            if (arr[i] > 0)
+            if (arr[i] > n) // mark numbers so that they are not added to missing numbers list later Ex:[1,6] so 6 will be marked and not added to the missingNUmbers list
                 mark[arr[i]] = true;
         }
-        if (missingNumbers.size() == 0)
-            missingNumbers.push_back(n + 1);
-        while (missingNumbers.size() < k)
+        // add the remaining missing numbers
+        for (int i = 1; missingNumbers.size() < k; i++)
         {
-            int num = missingNumbers.back() + 1;
-            while (mark.find(num) != mark.end())
-                num++;
-            missingNumbers.push_back(num);
+            int candidateNumber = i + arr.size(); // because missing numbers from [1,nums.size()] have already been added
+            // ignore if the array contains the candidate number
+            if (mark.find(candidateNumber) == mark.end())
+                missingNumbers.push_back(candidateNumber);
         }
-        return missingNumbers;
+        return missingNumbers[k - 1];
     }
 };

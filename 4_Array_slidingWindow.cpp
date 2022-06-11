@@ -122,7 +122,7 @@ int totalFruit(vector<int> &fruits)
     return maxL;
 }
 
-// 5. Same logic as 3rd. increase the window for new character, if character already exists shrink from left till it's count becomes 1
+// 5. Same logic as 2nd and 3rd. increase the window for new character, if character already exists shrink from left till it's count becomes 1
 int lengthOfLongestSubstring(string str)
 {
     int maxL = 0;
