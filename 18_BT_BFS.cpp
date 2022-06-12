@@ -19,17 +19,19 @@ struct TreeNode
 };
 /*
 1. Level Order Traversal
+1.1 Level Order Successor
 2. Level order traversal in spiral form/Zig-Zag
-3. Left View of BTree 
+3. Left View of BTree
 4. Right View Of Binary Tree
-5. Top View of Binary Tree 
+5. Top View of Binary Tree
 6. Bottom View of Binary Tree
-7. Min Height of Binary Tree:The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+7. Min Height of Binary Tree:
+    The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
 8. Vertical Order Traversal
-9. Populate Next Right pointers of Tree  
+9. Populate Next Right pointers of Tree
     a) using queue O(n) space :LOT
-    b) using constant space :LOT 
-10. Maximum Width of Binary Tree    
+    b) using constant space :LOT
+10. Maximum Width of Binary Tree
 */
 
 // 1 LOT
@@ -43,14 +45,14 @@ vector<vector<int>> levelOrder(TreeNode *root)
     q.push(root);
     while (!q.empty())
     {
-        int size = q.size(); //Gives the no of nodes in level we will be processing
+        int size = q.size(); // Gives the no of nodes in level we will be processing
         vector<int> lev(size);
         for (int i = 0; i < size; i++)
         {
             auto temp = q.front();
             q.pop();
             lev[i] = temp->val;
-            //Push Children to queue
+            // Push Children to queue
             if (temp->left)
                 q.push(temp->left);
             if (temp->right)
@@ -58,10 +60,36 @@ vector<vector<int>> levelOrder(TreeNode *root)
         }
         levels.push_back(lev);
     }
-
     return levels;
 }
+// 1.1 LOT successor
+int levelOrder(TreeNode *root, int key)
+{
+    if (!root)
+        return -1;
 
+    queue<TreeNode *> q;
+    q.push(root);
+    while (!q.empty())
+    {
+        int size = q.size(); // Gives the no of nodes in level we will be processing
+
+        for (int i = 0; i < size; i++)
+        {
+            auto temp = q.front();
+            q.pop();
+            // Push Children to queue
+            if (temp->left)
+                q.push(temp->left);
+            if (temp->right)
+                q.push(temp->right);
+            // check for level order successor only when it's children are pushed, Ex test case successor of root node
+            if (temp->val == key)
+                return q.empty() ? -1 : q.front()->val; // if q is empty no LS exist so return -1
+        }
+    }
+    return -1; // key does not exist return -1
+}
 // 2 Zig-Zag/Spiral LOT
 vector<vector<int>> zigzagLevelOrder(TreeNode *root)
 {
@@ -96,7 +124,7 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root)
     return levels;
 }
 
-//3 LeftView
+// 3 LeftView
 vector<int> leftSideView(TreeNode *root)
 {
     vector<int> lView;
@@ -123,7 +151,7 @@ vector<int> leftSideView(TreeNode *root)
     return lView;
 }
 
-//4 RightView
+// 4 RightView
 vector<int> rightSideView(TreeNode *root)
 {
     vector<int> rView;
@@ -154,7 +182,7 @@ vector<int> rightSideView(TreeNode *root)
 vector<int> topView(TreeNode *root)
 {
     unordered_map<int, int> nodeAtX; // No Need for vector since we want only topView node and not all nodes at postion X
-    int minX = 0, maxX = 0;          //later useful in traversing unordered_map from dist minX to maxX
+    int minX = 0, maxX = 0;          // later useful in traversing unordered_map from dist minX to maxX
     queue<pair<TreeNode *, int>> q;  // Node and it's location in X axis
     q.push({root, 0});
 
@@ -166,7 +194,7 @@ vector<int> topView(TreeNode *root)
         minX = min(minX, temp.second);
         maxX = max(maxX, temp.second);
 
-        if (nodeAtX.find(temp.second) == nodeAtX.end()) //level order so it will be visible from top view, once set no need to change
+        if (nodeAtX.find(temp.second) == nodeAtX.end()) // level order so it will be visible from top view, once set no need to change
             nodeAtX[temp.second] = temp.first->val;
 
         if (temp.first->left)
@@ -175,7 +203,7 @@ vector<int> topView(TreeNode *root)
             q.push({temp.first->right, temp.second + 1});
     }
     vector<int> topView(maxX - minX + 1);
-    for (int i = minX; i <= maxX; i++) //used here minX and maxX for constant time search
+    for (int i = minX; i <= maxX; i++) // used here minX and maxX for constant time search
         topView[i - minX] = nodeAtX[i];
     return topView;
 }
@@ -234,7 +262,7 @@ int minDepth(TreeNode *root)
         {
             auto temp = q.front();
             q.pop();
-            if (!temp->left && !temp->right) //first leaf node encountered
+            if (!temp->left && !temp->right) // first leaf node encountered
                 return height;
             if (temp->left)
                 q.push(temp->left);
@@ -252,9 +280,9 @@ check the layer, the node on higher level(close to root) goes first
 if they also in the same level, order from small to large
 */
 /*
- only same as 6 bottomview just replace 
- nodeAtX[temp.second] = temp.first->val 
- with 
+ only same as 6 bottomview just replace
+ nodeAtX[temp.second] = temp.first->val
+ with
  nodeAtX[temp.second].push_back(temp.first->val)
 */
 vector<vector<int>> verticalTraversal(TreeNode *root)
@@ -296,14 +324,13 @@ vector<vector<int>> verticalTraversal(TreeNode *root)
 }
 
 // 9. Populate Next Right pointers of Tree
-
 TreeNode *connectSpaceConstant(TreeNode *root)
 {
     if (!root)
         return NULL;
 
     TreeNode *head = root;           // Need to return root so using head for traversing current level
-    TreeNode nextLevel = TreeNode(); //nextLevel.next is used to move to next level after traversing current level
+    TreeNode nextLevel = TreeNode(); // nextLevel.next is used to move to next level after traversing current level
     TreeNode *curr = &nextLevel;
     // curr wil be used to set next pointer of each node
     // and at start of each level it sets the nextLevel.next
@@ -325,9 +352,9 @@ TreeNode *connectSpaceConstant(TreeNode *root)
             }
             head = head->next;
         }
-        head = nextLevel.next; //moved to nextLevel
-        nextLevel.next = NULL; //reset
-        curr = &nextLevel;     //at start of new level it will set the nextLevel.next first
+        head = nextLevel.next; // moved to nextLevel
+        nextLevel.next = NULL; // reset
+        curr = &nextLevel;     // at start of new level it will set the nextLevel.next first
     }
     return root;
 }
@@ -350,12 +377,12 @@ TreeNode *connectBFSQueue(TreeNode *root)
                 q.push(temp->left);
             if (temp->right)
                 q.push(temp->right);
-            temp->next = (i == size - 1) ? NULL : q.front();
+            temp->next = (i == size - 1) ? NULL : q.front(); // for last node in level point it to NULL
         }
     }
     return root;
 }
-//10
+// 10
 int widthOfBinaryTree(TreeNode *root)
 {
     if (!root)
