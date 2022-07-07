@@ -35,8 +35,6 @@ Cyclic Sort:
         Correct Ques Below:
             We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’.
             The array has only one duplicate but it can be repeated multiple times.
-            We are given an unsorted array containing ‘n+1’ numbers taken from the range 1 to ‘n’.
-            The array has ỏ̉nly one duplicate but it can be repeated multiple times.
 9. Find All Duplicates in an Array
     :https://leetcode.com/problems/find-all-duplicates-in-an-array/
 10. Repeat and Missing Number Array
@@ -210,6 +208,7 @@ public:
             }
         }
         // some further processing if needed
+        // furhter processing code
         return arr[n - 1];
     }
 };
@@ -229,7 +228,7 @@ public:
                 index++;
             else
             {
-                int indexOfCurrentElement = arr[index] - 1; // move the element to it's correct index, 3 will be moved to 3-1
+                int indexOfCurrentElement = arr[index] - 1; // move the element to it's correct index, 3 will be moved to 3-1=2
                 swap(arr[index], arr[indexOfCurrentElement]);
             }
         }
@@ -245,14 +244,15 @@ public:
         int index = 0, n = arr.size();
         while (index < n)
         {
-            if (arr[index] == index || arr[index] == n)
+            if (arr[index] == index)
                 index++;
             else
             {
                 int indexOfCurrentElement = arr[index];
                 if (arr[index] >= n)
                     index++;
-                swap(arr[index], arr[indexOfCurrentElement]);
+                else
+                    swap(arr[index], arr[indexOfCurrentElement]);
             }
         }
         for (int i = 0; i < n; i++)

@@ -12,8 +12,6 @@
 using namespace std;
 
 /*
-
-
 Sliding Window pattern:
 1. Maximum Average Subarray I https://leetcode.com/problems/maximum-average-subarray-i/
 2. Minimum Size Subarray Sum:https://leetcode.com/problems/minimum-size-subarray-sum/
@@ -82,8 +80,8 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
 
         while (um.size() > k) // we need to remove from left to make total types of characters = k
         {
-            um[str[winS]] -= 1;
-            if (um[str[winS]] == 0) // key does not exist in the window anymore delete it
+            um[str[winS]] -= 1;     // reduce count
+            if (um[str[winS]] == 0) // char does not exist in the window anymore delete it
                 um.erase(str[winS]);
             winS++;
         }
