@@ -16,7 +16,7 @@ using namespace std;
     url sorted input: https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
     url unsorted input: https://leetcode.com/problems/two-sum/
 2. Three Sum:
-    url:
+    url: https://leetcode.com/problems/3sum/
 3. Four Sum:
     url:
 4. Remove Duplicates from sorted Array:
@@ -44,6 +44,55 @@ vector<int> twoSum_sorted_input(vector<int> &nums, int target)
     return {i, j};
 }
 // 2.
+class UniqueThreeSum
+{
+public:
+    vector<vector<int>> threeSum(vector<int> &nums)
+    {
+
+        int target = 0;
+        vector<vector<int>> trip;
+        sort(nums.begin(), nums.end()); // sort so that we can use pointers at start and end
+        int n = nums.size();
+
+        int i = 0;
+        while (i < n)
+        {
+            auto v = twoSum(nums, target - nums[i], i + 1, n - 1);
+            for (auto p : v)
+                trip.push_back({nums[i], p.first, p.second});
+            i++;
+            // skip same element to avoid duplicate triplets
+            while (i < n && nums[i] == nums[i - 1]) // this line makes sure there are unique triplets
+                i++;
+        }
+        return trip;
+    }
+    // this method returns all unique two sum target pairs
+    vector<pair<int, int>> twoSum(vector<int> &nums, int target, int s, int e)
+    {
+
+        vector<pair<int, int>> pairs;
+        while (s < e)
+        {
+            int sum = nums[s] + nums[e];
+            if (sum == target)
+            {
+                pairs.push_back({nums[s], nums[e]});
+                s++;
+                // skip same element to avoid duplicate pairs
+                while (s < nums.size() && nums[s] == nums[s - 1]) // this line makes sure there are unique pairs
+                    s++;
+                e--;
+            }
+            else if (sum > target)
+                e--;
+            else
+                s++;
+        }
+        return pairs;
+    }
+};
 // 3.
 
 // 4. Remove Duplicates from sorted Array
@@ -66,6 +115,7 @@ int removeDuplicates(vector<int> &nums)
     }
     return i + 1; // till index i there are unique elements so size will be i+1
 }
+
 // 5. Squaring a Sorted Array
 // i → 0, j → n-1, compare abs at j and i which is max put it's square at end of array. ⇒T:n; S:1
 vector<int> sortedSquares(vector<int> &nums)
