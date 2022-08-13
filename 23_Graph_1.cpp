@@ -146,6 +146,7 @@ public:
         for (auto p : indegree)
             if (p.second == 0) // start with nodes which are not required by other nodes i.e idegree 0
                 q.push(p.first);
+
         while (!q.empty())
         {
             int temp = q.front();
@@ -187,6 +188,7 @@ public:
         // push the current node only after it's subtree is completed
         topOrder.push_back(src); // for src->node edge src should be done before node and all it's children
     }
+
     // 5 Detect Cycle
     // Undireced Graph:BFS
     bool cycle_check_BFS()

@@ -18,6 +18,8 @@ typedef long long ll;
 
 /*
 String matching
+    url: https://www.spoj.com/problems/NAJPF/
+    url: https://leetcode.com/problems/implement-strstr/
 0. BF
 1. Rabin Karp
 */
@@ -34,12 +36,12 @@ vector<int> bf_string_matching(string t, string p)
     }
     return indexes;
 }
-
-// 1. Rabin Karp
+// 1. RK(rolling hash)
 class RobinKarp
 {
     ll prime = 31;
     ll mod = 1e9 + 7;
+    ll prime_inv;
     vector<ll> power_prime;
     string text;
     string pattern;
@@ -48,7 +50,7 @@ class RobinKarp
         ll hash = 0;
         for (int i = 0; i < s.size(); i++)
         {
-            hash += (s[i] - 'a' + 1) * power_prime[i];
+            hash += (s[i] - 'a' + 1) * power_prime[i]; // a->1 not 0 because if a is 0. poly hash of aaaa,aaaaaa,a,aa all will be 0
             hash %= mod;
         }
         return hash;
@@ -66,17 +68,15 @@ class RobinKarp
         return ans;
     }
 
-    ll inv(ll p)
-    {
-        return fast_pow(p, mod - 2);
-    }
-
 public:
     RobinKarp(string t, string pat)
     {
         text = t;
         pattern = pat;
+        // precompute so that we can use it during rolling hash calculation
+        prime_inv = fast_pow(prime, mod - 2);
         vector<ll> prime_pow(pattern.size(), 0);
+
         ll p = 1;
         for (int i = 0; i < pattern.size(); i++)
         {
@@ -86,6 +86,7 @@ public:
         }
         power_prime = prime_pow;
     }
+
     vector<int> matched_indexes()
     {
         int n = text.size();
@@ -101,7 +102,7 @@ public:
         for (int i = 1; i + m <= n; i++)
         {
             curr_hash = (curr_hash - (text[i - 1] - 'a' + 1) + mod) % mod;
-            curr_hash = (curr_hash * inv(prime)) % mod;
+            curr_hash = (curr_hash * prime_inv) % mod;
             curr_hash = (curr_hash + ((text[i + m - 1] - 'a' + 1) * power_prime[m - 1]) % mod) % mod;
 
             if (curr_hash == pattern_hash)

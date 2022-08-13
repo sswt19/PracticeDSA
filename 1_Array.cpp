@@ -14,8 +14,7 @@ using namespace std;
 2. Pascal Triangle:https://leetcode.com/problems/pascals-triangle/
 3. Next Permutation: https://leetcode.com/problems/next-permutation/
 4. Kadane's|  Maximum Subarray: https://leetcode.com/problems/maximum-subarray/
-5. Dutch national flag problem |Sort array of 0’s 1’s 2’s without extra space in linear time: https://leetcode.com/problems/sort-colors/
-6. Stock buy and Sell: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+5. Stock buy and Sell: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 */
 // 1
 class Solution
@@ -129,27 +128,6 @@ public:
     }
 };
 // 5
-class DutchNationalFlag
-{
-public:
-    void sortColors(vector<int> &arr)
-    {
-        int n = arr.size();
-        int i = 0, j = n - 1, k = 0; // zero: till i-1, one: i to k-1, unknown: k to j, Two: From j+1 to end
-        int pivot = 1;
-        while (k <= j)
-        {
-            if (arr[k] < pivot)
-                // swap(arr[k],arr[i++]); // this was the mistake I did, i <=k (must) but if we don't increment k and input is 001 i will get ahead of k
-                swap(arr[k++], arr[i++]);
-            else if (arr[k] == pivot)
-                k++;
-            else
-                swap(arr[k], arr[j--]);
-        }
-    }
-};
-// 6
 class BuyAndSellStock
 {
 public:

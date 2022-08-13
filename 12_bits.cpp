@@ -35,7 +35,7 @@ int bitwiseComplement(int num)
         temp = temp >> 1;
     }
     int all_ones = pow(2, bitCounts) - 1;
-    return num ^ all_ones;
+    return num ^ all_ones; // XOR property 1^1=0 and 1^0=1
 }
 // 2
 int singleNumberOthersTwice(vector<int> &nums)

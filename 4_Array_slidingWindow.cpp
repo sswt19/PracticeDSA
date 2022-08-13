@@ -10,7 +10,7 @@
 #include <sstream>
 #include <climits>
 using namespace std;
-
+#define ll long long
 /*
 Sliding Window pattern:
 1. Maximum Average Subarray I https://leetcode.com/problems/maximum-average-subarray-i/
@@ -18,7 +18,7 @@ Sliding Window pattern:
 3. Longest Substring with At Most K Distinct Characters: https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
 4. Fruit Into Baskets:https://leetcode.com/problems/fruit-into-baskets/
 5. Longest Substring Without Repeating Characters: https://leetcode.com/problems/longest-substring-without-repeating-characters/
-6.
+6. Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
 */
 
 // 1
@@ -149,3 +149,30 @@ int lengthOfLongestSubstring(string str)
     }
     return maxL;
 }
+
+// 6. Subarrays with Product Less than a Target
+int numSubarrayProductLessThanK(vector<int> &nums, int k)
+{
+    int winS = 0, winE = 0;
+    int n = nums.size();
+    ll product = 1;
+    int count = 0;
+    while (winE < n)
+    {
+        product *= nums[winE];
+        while (winS <= winE && product >= k) // shrink from left
+        {
+            product = product / nums[winS];
+            winS++;
+        }
+        // count all subarrays b/w [winS,winE] ending at winE, using this method we will always count unqiue subarrays
+        int sub_arrays = winE - winS + 1;
+        count += sub_arrays;
+        winE++;
+    }
+
+    return count;
+}
+
+//
+//

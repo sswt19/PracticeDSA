@@ -262,7 +262,7 @@ int minDepth(TreeNode *root)
         {
             auto temp = q.front();
             q.pop();
-            if (!temp->left && !temp->right) // first leaf node encountered
+            if (!temp->left && !temp->right) // first leaf node encountered return the height
                 return height;
             if (temp->left)
                 q.push(temp->left);
