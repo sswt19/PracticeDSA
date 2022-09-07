@@ -32,7 +32,7 @@ double findMaxAverage(vector<int> &nums, int k)
         if (winEnd - winStart + 1 == k) // found a window of required size
         {
             maxAvg = max(maxAvg, winSum / (double)k); // process the window
-            // reduce the window size from left
+            // decrease the window size from left
             winSum -= nums[winStart]; // remove the start of window content
             winStart++;               // move the start of window ahead
         }
@@ -51,7 +51,7 @@ int minSubArrayLen(int target, vector<int> &nums)
         winSum += nums[winE];    // use the new element who is part of window now
         while (winSum >= target) // we will keep reducing from left side till the condition is satisfied
         {
-            minWin = min(minWin, winE - winS + 1);
+            minWin = min(minWin, winE - winS + 1); // current window might be the answer
             // decrease the window from left side
             winSum -= nums[winS];
             winS++;
@@ -85,7 +85,7 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
                 um.erase(str[winS]);
             winS++;
         }
-        // now the different types of character in string are <=k
+        // now the different types of character in string are <=k and window is useful
         maxL = max(maxL, winE - winS + 1);
         winE++; // increase the window
     }
@@ -93,6 +93,7 @@ int lengthOfLongestSubstringKDistinct(string str, int k)
 }
 
 // 4. Same as 3rd Longest Substring with K Distinct Characters where K=2.
+// Need to undertand how same question can be framed differently
 int totalFruit(vector<int> &fruits)
 {
     int k = 2;
