@@ -16,7 +16,9 @@ Problems
     https://www.interviewbit.com/problems/subset-sum-problem/
 3. Partition Equal Subset Sum
     https://leetcode.com/problems/partition-equal-subset-sum/
-4.
+4. Number Of Subsets with given sum
+    https://www.codingninjas.com/codestudio/problems/number-of-subsets_3952532
+5. Minimum Difference Subsets
 */
 
 // 1
@@ -107,5 +109,38 @@ int subset_sum(vector<int> &arr, int sum)
 }
 
 // 3. Partition Equal Subset Sum
+bool canPartitionToEqualSubsetSum(vector<int> &nums)
+{
+    int totalSum = 0;
+    for (auto v : nums)
+        totalSum += v;
+    if (totalSum & 1) // it is odd can not be divided into 2 subsets of equal sum
+        return false;
+    int equalSum = totalSum / 2;
+    // we will use the subset_sum function
+    return subset_sum(nums, equalSum);
+}
+
+// 4. Number Of Subsets with given sum
+int findWays(vector<int> &arr, int targetSum)
+{
+    int N = arr.size();
+    vector<vector<int>> dp(N + 1, vector<int>(targetSum + 1, 0));
+    dp[0][0] = 1; // Empty subset and when there are no numbers
+    // there might be zeros in arr so we are not setting base case for s=0
+
+    for (int i = 1; i <= N; i++)
+    {
+        for (int s = 0; s <= targetSum; s++) // chnage here start from s=0
+        {
+            if (s - arr[i - 1] >= 0)
+                dp[i][s] = dp[i - 1][s] + dp[i - 1][s - arr[i - 1]];
+            else
+                dp[i][s] = dp[i - 1][s];
+        }
+    }
+    return dp[N][targetSum];
+}
+// Minimum Difference Subsets
 
 //
