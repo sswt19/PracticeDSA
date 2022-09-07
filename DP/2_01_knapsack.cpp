@@ -19,6 +19,11 @@ Problems
 4. Number Of Subsets with given sum
     https://www.codingninjas.com/codestudio/problems/number-of-subsets_3952532
 5. Minimum Difference Subsets
+    https://www.interviewbit.com/problems/minimum-difference-subsets/
+6. Target Sum/Count no of subsets with given difference
+    https://leetcode.com/problems/target-sum/
+7. Last Stone Weight II
+    https://leetcode.com/problems/last-stone-weight-ii/
 */
 
 // 1
@@ -88,7 +93,7 @@ public:
 };
 
 // 2. Subset Sum
-int subset_sum(vector<int> &arr, int sum)
+int subset_sum_exists(vector<int> &arr, int sum)
 {
     int N = arr.size();
     vector<vector<int>> dp(N + 1, vector<int>(sum + 1, 0));
@@ -118,11 +123,11 @@ bool canPartitionToEqualSubsetSum(vector<int> &nums)
         return false;
     int equalSum = totalSum / 2;
     // we will use the subset_sum function
-    return subset_sum(nums, equalSum);
+    return subset_sum_exists(nums, equalSum);
 }
 
 // 4. Number Of Subsets with given sum
-int findWays(vector<int> &arr, int targetSum)
+int count_subsets_with_given_sum(vector<int> &arr, int targetSum)
 {
     int N = arr.size();
     vector<vector<int>> dp(N + 1, vector<int>(targetSum + 1, 0));
@@ -141,6 +146,70 @@ int findWays(vector<int> &arr, int targetSum)
     }
     return dp[N][targetSum];
 }
-// Minimum Difference Subsets
+// 5. Minimum Difference Subsets
+int subsets_with_min_diff(vector<int> &arr)
+{
+    int ts = 0;
+    for (auto v : arr)
+        ts += v;
+    int half_sum = ts / 2;
+    int N = arr.size();
+    vector<vector<int>> dp(N + 1, vector<int>(half_sum + 1, 0));
+    for (int i = 0; i <= N; i++)
+        dp[i][0] = 1;
+
+    for (int i = 1; i <= N; i++)
+    {
+        for (int s = 1; s <= half_sum; s++)
+        {
+            if (s - arr[i - 1] >= 0)
+                dp[i][s] = max(dp[i - 1][s], dp[i - 1][s - arr[i - 1]]);
+            else
+                dp[i][s] = dp[i - 1][s];
+        }
+    }
+    int cs = 0;
+    for (int s = half_sum; s >= 0; s--)
+    {
+        if (dp[N][s] == 1)
+        {
+            cs = s;
+            break;
+        }
+    }
+    int num1 = ts - cs;
+    int num2 = cs;
+    return abs(num1 - num2);
+}
+// 6 Target Sum
+
+int findTargetSumWays(vector<int> &nums, int target)
+{
+    /*
+    s1+s2=total_sum and s1-s2=target => two equations two variables
+    s1= (total_sum+target)/2;
+    if target is -ve,s1-s2=target => s2-s1=-target=> s2=(total_sum-target)/2 (target is -ve) so s2=(total_sum+abs(target))/2;
+    so for both case we will check for total_sum+abs(target)
+    */
+    target = abs(target);
+
+    int total_sum = 0;
+    for (auto v : nums)
+        total_sum += v;
+    if (total_sum < target)
+        return 0;
+    int s1 = total_sum + target;
+    if (s1 & 1) // odd so can not divide by 2
+        return 0;
+    s1 = s1 / 2;
+    return count_subsets_with_given_sum(nums, s1);
+}
+
+// 7.Last Stone Weight II
+
+int lastStoneWeightII(vector<int> &arr)
+{
+    return subsets_with_min_diff(arr);
+}
 
 //
