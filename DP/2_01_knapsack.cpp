@@ -104,7 +104,7 @@ int subset_sum_exists(vector<int> &arr, int sum)
     {
         for (int s = 1; s <= sum; s++)
         {
-            if (s - arr[i - 1] >= 0) // we will go to row s-arr[i-1]
+            if (s - arr[i - 1] >= 0) // we will go to column s-arr[i-1], i.e if s-arr[i-1] is possible till index i-1
                 dp[i][s] = max(dp[i - 1][s], dp[i - 1][s - arr[i - 1]]);
             else
                 dp[i][s] = dp[i - 1][s];
@@ -146,12 +146,14 @@ int count_subsets_with_given_sum(vector<int> &arr, int targetSum)
     }
     return dp[N][targetSum];
 }
+
 // 5. Minimum Difference Subsets
 int subsets_with_min_diff(vector<int> &arr)
 {
     int ts = 0;
     for (auto v : arr)
         ts += v;
+    // we will try to find if the subset sum exists closest to ts/2, since as close we are to ts/2 the difference b/w two sets will be minimum
     int half_sum = ts / 2;
     int N = arr.size();
     vector<vector<int>> dp(N + 1, vector<int>(half_sum + 1, 0));
@@ -168,6 +170,7 @@ int subsets_with_min_diff(vector<int> &arr)
                 dp[i][s] = dp[i - 1][s];
         }
     }
+    // finding closest to ts/2
     int cs = 0;
     for (int s = half_sum; s >= 0; s--)
     {
@@ -181,16 +184,19 @@ int subsets_with_min_diff(vector<int> &arr)
     int num2 = cs;
     return abs(num1 - num2);
 }
-// 6 Target Sum
 
+// 6 Target Sum
 int findTargetSumWays(vector<int> &nums, int target)
 {
+    // target value can be -ve
     /*
     s1+s2=total_sum and s1-s2=target => two equations two variables
     s1= (total_sum+target)/2;
+
     if target is -ve,s1-s2=target => s2-s1=-target=> s2=(total_sum-target)/2 (target is -ve) so s2=(total_sum+abs(target))/2;
     so for both case we will check for total_sum+abs(target)
     */
+
     target = abs(target);
 
     int total_sum = 0;

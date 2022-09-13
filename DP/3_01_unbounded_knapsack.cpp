@@ -4,13 +4,16 @@ typedef long long ll;
 
 /*
 Pattern: 0/1 Knapsack Unbounded
-URL: https://practice.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1/
 1. Brute force :    O(2^(n+c)) (Why: reason is in comments of BF solution)
 2. Top Down DP :    O(n*W)
 3. Bottom Up DP:    O(n*W)
 
 Problems
-1.
+1. 0/1 Knapsack Unbounded
+    https://practice.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1/
+2. Rod cutting
+    https://practice.geeksforgeeks.org/problems/rod-cutting0840/1
+3.
 */
 class Pattern01unboundedKnapsack
 {
@@ -68,3 +71,24 @@ public:
         return dp[weights.size()][capacity];
     }
 };
+
+// 2 rod Cutting
+int rodCutting(const vector<int> &lengths, vector<int> &prices, int capacity)
+{
+
+    int N = lengths.size();
+
+    vector<vector<int>> dp(N + 1, vector<int>(capacity + 1, 0));
+
+    for (int i = 1; i <= N; i++)
+    {
+        for (int c = 1; c <= capacity; c++)
+        {
+            if (c - lengths[i - 1] >= 0)
+                dp[i][c] = max(dp[i - 1][c], prices[i - 1] + dp[i][c - lengths[i - 1]]);
+            else
+                dp[i][c] = dp[i - 1][c];
+        }
+    }
+    return dp[N][capacity];
+}
