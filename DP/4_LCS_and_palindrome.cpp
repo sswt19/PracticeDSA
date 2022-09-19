@@ -22,7 +22,8 @@ Problems
     https://leetcode.com/problems/longest-common-subsequence/
 2. Longset Common Substring
     https://practice.geeksforgeeks.org/problems/longest-common-substring1452/1
-3.
+3. Shortest Common Supersequence
+    https://leetcode.com/problems/shortest-common-supersequence/
 
 */
 // 1
@@ -108,6 +109,47 @@ public:
             return prev.back();
         }
     }
+
+    string get_lcs(string s1, string s2)
+    {
+
+        int s1_size = s1.size();
+        int s2_size = s2.size();
+
+        //*********** S: O(s1*s2)*******************//
+        // we cam use same dp to construct the lcs
+        vector<vector<int>> dp(s1_size + 1, vector<int>(s2_size + 1, 0));
+        // base case when length of any of the string is 0 the lcs is 0, so we will start at 1,1
+        for (int i = 1; i <= s1_size; i++)
+        {
+            for (int j = 1; j <= s2_size; j++)
+            {
+                if (s1[i - 1] == s2[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        // to get the LCS string
+        string lcs = "";
+        int x = s1_size, y = s2_size;
+        while (dp[x][y] != 0)
+        {
+            if (s1[x - 1] == s2[y - 1])
+            {
+                lcs += s1[x - 1];
+                x = x - 1;
+                y = y - 1;
+            }
+            else if (dp[x][y] == dp[x][y - 1])
+                y = y - 1;
+            else
+                x = x - 1;
+        }
+        reverse(lcs.begin(), lcs.end());
+        return lcs;
+    }
 };
 
 // 2 LCSubstring
@@ -166,3 +208,37 @@ int longestCommonSubstr(string s1, string s2, int n, int m)
     // the string will be of size maxlcs backward from endIndex [endIndex-maxlcs+1,endIndex]
     return maxlcs;
 }
+
+// 3 Shortest Common Supersequence
+string shortestCommonSupersequence(string str1, string str2)
+{
+    PatternLongestCommonSubsequence p;
+    string lcs = p.get_lcs(str1, str2);
+    string scs = "";
+    int i = 0;
+    int j = 0;
+    int r = 0;
+    while (r < lcs.size())
+    {
+        while (i < str1.size() && str1[i] != lcs[r])
+        {
+            scs += str1[i];
+            i++;
+        }
+        while (j < str2.size() && str2[j] != lcs[r])
+        {
+            scs += str2[j];
+            j++;
+        }
+        scs += lcs[r];
+        r++;
+        i++;
+        j++;
+    }
+
+    return scs + str1.substr(i) + str2.substr(j);
+}
+
+//
+
+//
