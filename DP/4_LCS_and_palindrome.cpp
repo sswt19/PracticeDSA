@@ -113,28 +113,54 @@ public:
 // 2 LCSubstring
 int longestCommonSubstr(string s1, string s2, int n, int m)
 {
+    bool spaceOptimize = false;
+
     int maxlcs = 0;
     int endIndex = -1; // stores lcs endindex for string s1
     int s1_size = s1.size();
     int s2_size = s2.size();
-    vector<vector<int>> dp(s1_size + 1, vector<int>(s2_size + 1, 0));
-    // stores the longest substring ending at i,j
 
-    for (int i = 1; i <= s1_size; i++)
-    {
-        for (int j = 1; j <= s2_size; j++)
+    if (spaceOptimize == false)
+    { // stores the longest substring ending at i,j
+        vector<vector<int>> dp(s1_size + 1, vector<int>(s2_size + 1, 0));
+        for (int i = 1; i <= s1_size; i++)
         {
-            if (s1[i - 1] == s2[j - 1])
+            for (int j = 1; j <= s2_size; j++)
             {
-                dp[i][j] = 1 + dp[i - 1][j - 1];
-                if (dp[i][j] > maxlcs)
+                if (s1[i - 1] == s2[j - 1])
                 {
-                    maxlcs = dp[i][j];
-                    endIndex = i - 1;
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                    if (dp[i][j] > maxlcs)
+                    {
+                        maxlcs = dp[i][j];
+                        endIndex = i - 1;
+                    }
                 }
+                else
+                    dp[i][j] = 0;
             }
-            else
-                dp[i][j] = 0;
+        }
+    }
+    else
+    {
+        vector<int> prev(s2_size + 1, 0), cur(s2_size + 1, 0);
+        for (int i = 1; i <= s1_size; i++)
+        {
+            for (int j = 1; j <= s2_size; j++)
+            {
+                if (s1[i - 1] == s2[j - 1])
+                {
+                    cur[j] = 1 + prev[j - 1];
+                    if (cur[j] > maxlcs)
+                    {
+                        maxlcs = cur[j];
+                        endIndex = i - 1;
+                    }
+                }
+                else
+                    cur[j] = 0;
+            }
+            prev = cur;
         }
     }
     // the string will be of size maxlcs backward from endIndex [endIndex-maxlcs+1,endIndex]
