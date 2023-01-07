@@ -39,6 +39,8 @@ using ll = long long;
     url: https://leetcode.com/problems/backspace-string-compare/
 8. Shortest Unsorted Continuous Subarray
     url: https://leetcode.com/problems/shortest-unsorted-continuous-subarray/
+9. Valid Palindrome II
+    url: https://leetcode.com/problems/valid-palindrome-ii/description/
 
 */
 // 1A. Two Sum Sorted Array
@@ -342,26 +344,44 @@ vector<int> sortedSquares(vector<int> &nums)
 }
 
 // 6. Dutch national flag problem |Sort array of 0’s 1’s 2’s without extra space in linear time
-void sortColors(vector<int> &arr)
+class sortColor
 {
-    int n = arr.size();
-    int i = -1, j = n, k = 0;
-    // till i we have 0
-    //  i+1 to k-1 we have 1
-    //  from j we have 2
-    int pivot = 1;
-    while (k < j)
-    {
-        if (arr[k] < pivot)
-            // swap(arr[++i],arr[k]); this was the mistake I did, i<k (must) but if we don't increment k and input is 001 i will get ahead of k
-            swap(arr[++i], arr[k++]); // the value at i can be 0 or 1 so we can increase the k
-        else if (arr[k] > pivot)      // the number we swapped may be 0, so we cannot increase k here
-            swap(arr[--j], arr[k]);
-        else // number is 1 so increase k
-            k++;
-    }
-}
+    /*
+    We will divide into four containers using three variables
+    till i-1    -> 0
+    i-1 to k-1  -> 1
+    k to j      -> traversing
+    from j+1    -> 2
+    */
 
+public:
+    void sortColors(vector<int> &arr)
+    {
+        int n = arr.size();
+        int i = 0, j = n - 1, k = 0;
+        // till i-1 we have 0
+        // from j+1 we have 2
+        //  i to j are 1
+        // i<=k<=j
+        int pivot = 1;
+        while (k <= j)
+        {
+            if (arr[k] < pivot) // for 0
+            {
+                swap(arr[i], arr[k]);
+                i++;
+                k++; // Past mistake *** i<=k (must) but if we don't increment k and input is 001 i will get ahead of k ***
+            }
+            else if (arr[k] > pivot) // for 2
+            {
+                swap(arr[k], arr[j]);
+                j--;
+            }
+            else // for 1
+                k++;
+        }
+    }
+};
 // 7. Comparing Strings containing Backspaces
 bool backspaceCompare(string s, string t)
 {
@@ -453,4 +473,41 @@ int findUnsortedSubarray(vector<int> &nums)
         j++;
     return j - i + 1; // window size
 }
+
+// 9. Valid Palindrome 2
+class validPalindrome2
+{
+    /*
+    thinking: no matter from where we remove the character, the last and first character should always match for a palindrome, so we will keep going froom first and last if they
+    do not match then either of the one needs to be removed and we check if the rest of the string is palindrome after removing the character
+    */
+public:
+    bool validPalindrome(string s)
+    {
+        return isValid(s, 0, s.size() - 1, 1);
+    }
+    bool isValid(string s, int l, int h, int count)
+    {
+        if (s.size() == 0 || l == h)
+            return true;
+
+        while (l < h)
+        {
+            if (s[l] != s[h])
+            {
+                if (count == 0)
+                    return false;
+                else
+                    return isValid(s, l, h - 1, count - 1) || isValid(s, l + 1, h, count - 1);
+            }
+            else
+            {
+                l++;
+                h--;
+            }
+        }
+        return true;
+    }
+};
+
 //

@@ -48,7 +48,14 @@ Cyclic Sort:
 
 // 1
 class RotateImage
-{
+{ /*
+Goal: [i][j]--->After 90 degree rotation will be in [j][n-i] (i start from 1)
+A. Maths Approach:
+    1. First transpose-> [i][j] will be in [j][i]
+    2. Reverse each row ->the value at [j][i] will be now at [j][n-i]
+
+B. Implementation approach:
+*/
 public:
     void rotate(vector<vector<int>> &matrix)
     {
@@ -74,7 +81,7 @@ public:
     vector<vector<int>> merge(vector<vector<int>> &intervals)
     {
         sort(intervals.begin(), intervals.end(), [](vector<int> const &a, vector<int> const &b)
-             { return a[0] < b[0]; });
+             { return a[0] != b[0] ? a[0] < b[0] : a[1] < b[1]; });
         vector<vector<int>> merged;
 
         auto last = intervals[0];
@@ -121,6 +128,7 @@ public:
     }
     void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
     {
+        // here nums1 has extra space and is of size n+m, so sorted elements will be kept in nums1
         int k = m + n - 1; // fill from the end
         int i = m - 1;
         int j = n - 1;
@@ -316,7 +324,7 @@ public:
             else
             {
                 int indexOfCurrentElement = arr[index] - 1;
-                if (arr[index] == arr[indexOfCurrentElement])
+                if (arr[index] == arr[indexOfCurrentElement]) // when both elements are same no need to swap
                     index++;
                 else
                     swap(arr[index], arr[indexOfCurrentElement]);

@@ -18,7 +18,11 @@ Sliding Window pattern:
 3. Longest Substring with At Most K Distinct Characters: https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
 4. Fruit Into Baskets:https://leetcode.com/problems/fruit-into-baskets/
 5. Longest Substring Without Repeating Characters: https://leetcode.com/problems/longest-substring-without-repeating-characters/
-6. Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
+
+
+
+
+ Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
 */
 
 // 1
@@ -151,7 +155,8 @@ int lengthOfLongestSubstring(string str)
     return maxL;
 }
 
-// 6. Subarrays with Product Less than a Target
+// TODO: Add number to this problem
+//  Subarrays with Product Less than a Target
 int numSubarrayProductLessThanK(vector<int> &nums, int k)
 {
     int winS = 0, winE = 0;

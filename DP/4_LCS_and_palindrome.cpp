@@ -13,7 +13,7 @@ typedef long long ll;
 
 /*
 Pattern: Longest Common Subsequence
-1. Brute force :    O(2^(n+c)) (Why: reason is in comments of BF solution)
+1. Brute force :    O(2^(n+m)) (Why: reason is in comments of BF solution)
 2. Top Down DP :    O(s2*s1)
 3. Bottom Up DP:    O(s2*s1) S: O(2*s1)
 
@@ -24,9 +24,10 @@ Problems
     https://practice.geeksforgeeks.org/problems/longest-common-substring1452/1
 3. Shortest Common Supersequence
     https://leetcode.com/problems/shortest-common-supersequence/
+4. Minimum Deletions & Insertions to Transform a String into another
 
 */
-// 1
+// 1 Longest Common Subsequence
 class PatternLongestCommonSubsequence
 {
 
@@ -235,10 +236,10 @@ string shortestCommonSupersequence(string str1, string str2)
         i++;
         j++;
     }
-
+    // need to add any remaining part of both strings which is not in lcs
     return scs + str1.substr(i) + str2.substr(j);
 }
 
-//
+// 4 Minimum Deletions & Insertions to Transform a String into another
 
 //
