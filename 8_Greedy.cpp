@@ -13,9 +13,9 @@ using namespace std;
 1. Greedy coin change
 2. Fractional Knapsack
     :https://practice.geeksforgeeks.org/problems/fractional-knapsack-1587115620/1
-3. Min Required Meeting Rooms/ Platforms at Railway station
-    : https://leetcode.com/problems/meeting-rooms-ii/
-    :https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1#
+3. Min Required Meeting Rooms or Min Platforms required at Railway station
+    :https://leetcode.com/problems/meeting-rooms-ii/
+    :https://practice.geeksforgeeks.org/problems/minimum-platforms-1587115620/1#
 4. N meetings in 1 room or Activity Selection
     :https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1#
 5. Interal Covering with min points
@@ -79,28 +79,37 @@ double fractionalKnapsack(int W, Item arr[], int n)
 }
 
 // 3 Railway platforms required with platform/ room no
-int minMeetingRooms(vector<vector<int>> &intervals)
+class MinMeetingRooms
 {
-    // Sort by start time, give room to one which starts first
-    sort(intervals.begin(), intervals.end(), [](vector<int> const &a, vector<int> const &b)
-         { return a[0] < b[0]; });
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq_min;
-    pq_min.push({intervals[0][1], 1}); // push end time and room number;
-
-    for (int i = 1; i < intervals.size(); i++)
+public:
+    int findPlatform(int arr[], int dep[], int n)
     {
-        if (pq_min.top().first <= intervals[i][0]) // we can use this room since the meeting in this room is already over
-        {
-            auto lastMeeting = pq_min.top();
-            pq_min.pop();
-            pq_min.push({intervals[i][1], lastMeeting.second});
-        }
-        else // need new room
-            pq_min.push({intervals[i][1], pq_min.size() + 1});
-    }
+        // have it in same vector to sort
+        vector<vector<int>> intervals(n);
+        for (int i = 0; i < n; i++)
+            intervals[i] = {arr[i], dep[i]};
 
-    return pq_min.size();
-}
+        // Sort by start time, give room to one which starts first
+        sort(intervals.begin(), intervals.end(), [](vector<int> const &a, vector<int> const &b)
+             { return a[0] < b[0]; });
+
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq_min;
+
+        for (int i = 0; i < intervals.size(); i++)
+        {
+            // <= or < depending what the criteria is for sharing same station with same departure and arrival time of two trains
+            if (pq_min.size() != 0 && pq_min.top().first < intervals[i][0]) // we can use this room since the meeting in this room is already over
+            {
+                auto lastMeeting = pq_min.top();
+                pq_min.pop();
+                pq_min.push({intervals[i][1], lastMeeting.second}); // alocate the meeting room to new meeting
+            }
+            else // need new room, since we can't use all existing meeting rooms
+                pq_min.push({intervals[i][1], pq_min.size() + 1});
+        }
+        return pq_min.size();
+    }
+};
 
 // 4 N meetings in 1 room or Activity Selection
 class ActivitSelection
