@@ -21,8 +21,11 @@ using namespace std;
 
 class SetMatrixZeroes
 { /*
- 1. We will use the same matrix to store our requied information.
-     How is in comments of code
+    We will use the same matrix to store our requied information.
+    a) find out if 0th row and 0th col needs to be set to 0
+    b) use 0th row and 0th column to store which row and column needs to be set to 0
+    c) Set the row and col to 0 using b) mapping
+    d) set 0th row and col to 0 using stored values in a)
  */
 public:
     void setZeroes(vector<vector<int>> &matrix)
@@ -31,14 +34,15 @@ public:
         int n = matrix[0].size();
         bool row0 = false, col0 = false;
 
-        // to check if 0th row and 0th column needs to be set to zero, this will handle M[0][0] as well
+        // a) to check if 0th row and 0th column needs to be set to zero, this will handle M[0][0] as well
         for (int i = 0; i < m; i++)
             if (matrix[i][0] == 0)
                 col0 = true;
         for (int i = 0; i < n; i++)
             if (matrix[0][i] == 0)
                 row0 = true;
-        // using 0th row for column and 0th column for row to store info about zero
+
+        // b) using 0th row for column and 0th column for row to store info about zero
         for (int i = 1; i < m; i++)
         {
             for (int j = 1; j < n; j++)
@@ -48,13 +52,14 @@ public:
                     matrix[0][j] = 0;
                 }
         }
-        // using 0th row and 0th col to update whole matrix
+        // c) using 0th row and 0th col to update whole matrix
         for (int i = 1; i < m; i++)
             for (int j = 1; j < n; j++)
                 if (matrix[i][0] == 0 || matrix[0][j] == 0)
                     matrix[i][j] = 0;
 
-        // Setting 0th row and 0th col to 0 if the booleans are true
+        // d) now we need to hanlde the 0th row and 0th column
+        //  Setting 0th row and 0th col to 0 if the booleans are true
         if (row0)
             for (int i = 0; i < n; i++)
                 matrix[0][i] = 0;
@@ -67,17 +72,26 @@ public:
 
 // 2
 class PascalTriangle
-{
+{ /* We will use the previous row to compute the current row
+        a) 1st level will have only 1
+        b) n'th level will n items.
+        c) each row's first and last element will be 1
+        d) we will fill from 2nd to 2nd last element using the previous row
+*/
 public:
     vector<vector<int>> generate(int n)
     {
         vector<vector<int>> pascalT;
+        // a)
         pascalT.push_back({1});
-        for (int i = 1; i < n; i++)
+
+        for (int row = 2; row <= n; row++)
         {
-            vector<int> level(i + 1, 1);                              // n'th level will n items so i+1th level will have i+1 items, we are setting the first and last element to 1 for each row
-            for (int j = 1; j < i; j++)                               // for current row set other values other than first and last
-                level[j] = pascalT[i - 1][j - 1] + pascalT[i - 1][j]; // using the previous level for filling curent level
+            // b) and c)
+            vector<int> level(row, 1);
+            // d)
+            for (int i = 1; i < row - 1; i++)
+                level[i] = pascalT[row - 2][i - 1] + pascalT[row - 2][i]; // row - 2, because array is 0 indexed
             pascalT.push_back(level);
         }
         return pascalT;
@@ -86,31 +100,33 @@ public:
 
 // 3
 class NextPerm
-{
-    /*
-    1.find first a[i-1]<a[i], means from [i,n-1] all elements are in non increasing order
-    2.the value at i-1 will be swapped will be swapped with correct element
-    3.reverse from [i,n-1], leads to sorted array
-    4.traverse from i to end to find smallest value greater than a[i-1] and swap it
+{ /*
+     a.find first i such that, a[i]<a[i+1], means from [i+1,n-1] all elements are in non increasing order
+     b.we need to arrange the values from [i,n-1], the value at i will be swapped will be swapped with value just greater than at i
+     c.reverse from [i+1,n-1], leads to sorted array
+     d.traverse from i to end to find smallest value greater than a[i-1] and swap it
     */
 public:
     void nextPermutation(vector<int> &nums)
     {
         int n = nums.size();
-        int i = n - 1;
-        while (i > 0)
+        int i = n - 2;
+        // a
+        while (i >= 0)
         {
-            if (nums[i - 1] < nums[i]) // from i to n-1 all numbers are in decreasing order
+            if (nums[i] < nums[i + 1])
                 break;
             i--;
         }
-        reverse(nums.begin() + i, nums.end()); // i to n-1 are now in increasing order
-        if (i != 0)                            // if i==0 then whole array was in decreasing order
-        {
-            for (int j = i; j < n; j++)
-                if (nums[j] > nums[i - 1])
+        // c
+        reverse(nums.begin() + i + 1, nums.end());
+        // if i < 0 means the list was the greatest number possible and after revers, it is smallest number possible
+        if (i >= 0)
+        { // d
+            for (int j = i + 1; j < n; j++)
+                if (nums[i] < nums[j])
                 {
-                    swap(nums[j], nums[i - 1]);
+                    swap(nums[i], nums[j]);
                     break;
                 }
         }
@@ -121,6 +137,7 @@ public:
 class Kadane
 {
     /*
+    Always ask if empty subarray is allowed
     Approach:
     1. We will find max subarray ending at current index, for all indexes
         1.1 the max subarray sum ending at current index i is = max(only the value at current index i,  max subarray sum ending at current index i-1 + arr[i])
@@ -130,7 +147,7 @@ class Kadane
 public:
     long long maxSubArray(vector<int> &arr)
     {
-        // long long gs = max(0, arr[0]); // if empty subarray allowed, i.e no elements are present in subarray
+        //*** long long gs = max(0, arr[0]); // if empty subarray allowed, i.e no elements are present in subarray
         long long gs = arr[0];
         long long ls = arr[0];
         for (int i = 1; i < arr.size(); i++)

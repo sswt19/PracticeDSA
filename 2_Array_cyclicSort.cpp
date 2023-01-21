@@ -19,6 +19,7 @@ using ll = long long;
     :https://leetcode.com/problems/merge-sorted-array/
 4. Inversion of Array
 
+
 Cyclic Sort:
 ****************************************************************************************************************
 -> Always try to see if we can solve it using XOR even if it is solvable by cyclic sort
@@ -101,14 +102,22 @@ public:
 };
 // 3
 class MergeTwoSortedArray
-{
+{ /*
+         the numbers should be in nums1 and then in nums2
+         a. compare nums1 last number and nums2 first number
+         b if nums1 last number is higher swap the 2, and position them in the correct place in their respective array using bubble up way
+        Time complexity will be m*(m+n) (nums1->n ,nums2->m)
+        we will swap at most m times and each time both the array might be traversed completely
+    */
 public:
     void mergeNoExtraSpaceInAnyVector(vector<int> &nums1, int m, vector<int> &nums2, int n)
     {
         if (n == 0 || m == 0) // no need to merge
             return;
+        // a
         while (nums1[m - 1] > nums2[0]) // last element of first array is greater than first element of second array
         {
+            // b
             swap(nums1[m - 1], nums2[0]);
             for (int j = m - 1; j > 0; j--) // bring the new element in first array to correct place using bubble up
             {
@@ -126,7 +135,7 @@ public:
             }
         }
     }
-    void merge(vector<int> &nums1, int m, vector<int> &nums2, int n)
+    void mergeWithExtraSpaceInOneVector(vector<int> &nums1, int m, vector<int> &nums2, int n)
     {
         // here nums1 has extra space and is of size n+m, so sorted elements will be kept in nums1
         int k = m + n - 1; // fill from the end

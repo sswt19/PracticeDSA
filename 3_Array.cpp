@@ -31,19 +31,22 @@ public:
     bool searchMatrix(vector<vector<int>> &matrix, int target)
     {
 
-        int m = matrix.size();
-        int n = matrix[0].size();
+        int m = matrix.size();    // rows
+        int n = matrix[0].size(); // columns
 
         int s = 0, e = m - 1;
+        int mid = s + (e - s) / 2;
         while (s < e)
         {
-            int mid = s + (e - s) / 2;
-            if (matrix[mid][n - 1] < target)
+            if (matrix[mid][n - 1] == target)
+                return true;
+            else if (matrix[mid][n - 1] < target)
                 s = mid + 1;
             else
-                e = mid; // not mid-1 because the data might be at mid
+                e = mid; // might be in same row of mid
+            mid = s + (e - s) / 2;
         }
-        return binary_search(matrix[e].begin(), matrix[e].end(), target);
+        return binary_search(matrix[mid].begin(), matrix[mid].end(), target);
     }
     // 1B
     bool searchMatrix2(vector<vector<int>> &matrix, int target)
@@ -74,7 +77,21 @@ public:
 class PowNegative
 {
 public:
-    double myPow(double x, int n)
+    // simple solution but because of overflow test case in test case of leetcode myPow2 is to handle overflow
+    double myPow1(double x, int n)
+    {
+        if (n == 0)
+            return 1;
+        if (n < 0)
+            return 1 / myPow1(x, abs(n)); // overflow will happen here, for n= -2147483648,then abs(n) also = -2147483648 due
+
+        double x_pow_half_n = myPow1(x, n / 2);
+        double ans = x_pow_half_n * x_pow_half_n;
+        if (n & 1)
+            ans = ans * x;
+        return ans;
+    }
+    double myPow2(double x, int n)
     {
         if (n == 0)
             return 1;
@@ -83,7 +100,7 @@ public:
         bool oddPower = n % 2 != 0;
 
         int n_half = abs((long long)n / 2); // To avoid overflow, if n= -2147483648,then abs(n) also = -2147483648 due to overflow
-        double value = myPow(x, n_half);
+        double value = myPow2(x, n_half);
         value = value * value;
 
         value = oddPower ? value * x : value;
@@ -91,6 +108,7 @@ public:
         return negativePow ? 1 / value : value;
     }
 };
+
 // 3
 class MajorityElement
 {
@@ -107,7 +125,7 @@ public:
                 majElement = nums[i];
             if (majElement == nums[i]) // if matches increase count
                 count++;
-            else // decrease count and if it becomes then the next index will become majority element
+            else // decrease count and if it becomes 0 then the next index will become majority element
                 count--;
         }
 
