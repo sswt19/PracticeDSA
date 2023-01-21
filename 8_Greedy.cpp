@@ -29,8 +29,8 @@ using namespace std;
 // 1 coin change Greedy will not work always, DP will always works
 void mincoinChange(int amount, vector<int> &coins)
 {
-    sort(coins.begin(), coins.end(), [](const int &a, const int &b) // Sort coins in decreasing order of value
-         { return a > b; });
+    sort(coins.begin(), coins.end(), [](const int &a, const int &b)
+         { return a > b; }); // Sort coins in decreasing order of value
     int i = 0;
     while (amount > 0)
     {
@@ -103,22 +103,35 @@ int minMeetingRooms(vector<vector<int>> &intervals)
 }
 
 // 4 N meetings in 1 room or Activity Selection
-int activitSelection(vector<pair<int, int>> &activities)
+class ActivitSelection
 {
-    sort(activities.begin(), activities.end(), [](const pair<int, int> &a, const pair<int, int> &b)
-         { return a.second < b.second; }); // sort by end time
-    int count = 0;
-    int last = -1;
-    for (int i = 0; i < activities.size(); i++)
+    /*
+        We will sort by end time and will pick ones who ends earliest
+        1. Why? when we pick the first activity, it will be one which ends earliest and we will get more time to do other activities.
+        2. If instead of this we picked something else it will end after then what we have now, so it will give us less time to try other activities
+    */
+public:
+    int maxMeetings(int start[], int end[], int n)
     {
-        if (activities[i].first > last)
+        vector<pair<int, int>> activities(n);
+        for (int i = 0; i < n; i++)
+            activities[i] = {start[i], end[i]};
+        sort(activities.begin(), activities.end(), [](const pair<int, int> &a, const pair<int, int> &b)
+             { return a.second < b.second; }); // sort by endtime
+
+        int count = 0;
+        int last = -1;
+        for (auto activity : activities)
         {
-            count++;
-            last = activities[i].second;
+            if (activity.first > last) // we can do this activity
+            {
+                last = activity.second;
+                count++;
+            }
         }
+        return count;
     }
-    return count;
-}
+};
 
 // 5 Interal Covering with min points
 int findMinArrowShots(vector<vector<int>> &points)
@@ -143,7 +156,12 @@ int findMinArrowShots(vector<vector<int>> &points)
 
 // 6 Merge Intervals
 vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
-{
+{ /*
+     a. Sort by start time, the first interval's start time will be the same as sorted list's 1st interval's start time
+     b. Keep merging all intervals whose start is less than or equal to current_intervals's end time
+     c. if start of an interval is higher than current_interval's end, we found an interval, since all remaining intervals's start will be higher as well
+ */
+    // a
     sort(intervals.begin(), intervals.end(), [](vector<int> const &a, vector<int> const &b)
          { return a[0] < b[0]; }); // sort by start time
     vector<vector<int>> merged;
@@ -151,11 +169,13 @@ vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
     auto last = intervals[0];
     for (int i = 1; i < intervals.size(); i++)
     {
+        // c
         if (last[1] < intervals[i][0]) // no overlap, one independent interval found
         {
             merged.push_back(last);
             last = intervals[i];
         }
+        // b
         else                                         // there is a overlap merge them
             last[1] = max(last[1], intervals[i][1]); // pick the max end time
     }
