@@ -31,11 +31,11 @@ struct ListNode
 6. Add two numbers in LL (Number are in reverse order)
     https://leetcode.com/problems/add-two-numbers/
 7. Check cycle
-
+    https://leetcode.com/problems/linked-list-cycle/
 8. Find starting point of cycle
-
+    https://leetcode.com/problems/linked-list-cycle-ii/
 9. Remove Cycle
-
+    https://practice.geeksforgeeks.org/problems/remove-loop-in-linked-list/1
 */
 // 1 Reverse a LL
 class ReverseLL
@@ -223,65 +223,85 @@ public:
     }
 };
 
-// 7
-bool hasCycle(ListNode *head)
-{
-    auto slow = head;
-    auto fast = head;
+// 7 Detect Cycle
+class DetectCycleinLL
+{ /*
+  Approaches: 1) use hashmap
+  2) use the below method
+  */
+public:
+    bool hasCycle(ListNode *head)
+    {
+        auto slow = head;
+        auto fast = head;
 
-    while (fast && fast->next)
-    {
-        slow = slow->next;
-        fast = fast->next->next;
-        if (slow == fast)
-            return true;
-    }
-    return false;
-}
-// 8
-ListNode *detectCycleStart(ListNode *head)
-{
-    auto slow = head, fast = head;
-    while (fast && fast->next)
-    {
-        slow = slow->next;
-        fast = fast->next->next;
-        if (slow == fast)
+        while (fast && fast->next)
         {
-            // find starting point now
-            slow = head;
-            while (slow != fast)
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast)
+                return true;
+        }
+        // we have reached end of the list and there was no cycle
+        return false;
+    }
+};
+
+// 8 Find starting point of cycle
+class DetectCycleStart
+{
+public:
+    ListNode *detectCycleStart(ListNode *head)
+    {
+        auto slow = head, fast = head;
+        while (fast && fast->next)
+        {
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast)
             {
-                slow = slow->next;
-                fast = fast->next;
+                // find starting point now
+                slow = head;
+                while (slow != fast)
+                {
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+                return slow;
             }
-            return slow;
+        }
+        return NULL;
+    }
+};
+
+// 9 Remove Cycle
+class RemoveCycle
+{
+public:
+    // Use same logic as detect start of cycle keep a pointer just before the start of cycle break it
+    void removeLoop(ListNode *head)
+    {
+        auto slow = head, fast = head;
+        ListNode *prev = NULL;
+        while (fast && fast->next)
+        {
+            prev = fast->next; // will always be one step behind fast
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast)
+            {
+                // find starting point now
+                slow = head;
+                while (slow != fast)
+                {
+                    prev = fast; // will always be one step behind fast
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+                prev->next = NULL; // break the cycle
+            }
         }
     }
-    return NULL;
-}
-// 9
-// Use same logic as detect start of cycle keep a pointer just before the start of cycle break it
-void removeLoop(ListNode *head)
-{
-    auto slow = head, fast = head;
-    ListNode *prev = NULL;
-    while (fast && fast->next)
-    {
-        prev = fast->next; // will always be one step behind fast
-        slow = slow->next;
-        fast = fast->next->next;
-        if (slow == fast)
-        {
-            // find starting point now
-            slow = head;
-            while (slow != fast)
-            {
-                prev = fast; // will always be one step behind fast
-                slow = slow->next;
-                fast = fast->next;
-            }
-            prev->next = NULL; // break the cycle
-        }
-    }
-}
+};
+
+//
