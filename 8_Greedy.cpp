@@ -18,31 +18,37 @@ using namespace std;
     :https://practice.geeksforgeeks.org/problems/minimum-platforms-1587115620/1#
 4. N meetings in 1 room or Activity Selection
     :https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1#
-5. Interal Covering with min points
-    :https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/
-6. Merge Overlapping Subintervals
+5. Merge Overlapping Subintervals
     :https://leetcode.com/problems/merge-intervals/
+6. Job Scheduling
+    :https://practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1#
 7. Insert Interval
     :https://leetcode.com/problems/insert-interval/
+8. Interal Covering with min points
+    :https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/
 */
 
 // 1 coin change Greedy will not work always, DP will always works
-void mincoinChange(int amount, vector<int> &coins)
+class CoinChangeGreedy
 {
-    sort(coins.begin(), coins.end(), [](const int &a, const int &b)
-         { return a > b; }); // Sort coins in decreasing order of value
-    int i = 0;
-    while (amount > 0)
+public:
+    void mincoinChange(int amount, vector<int> &coins)
     {
-        if (coins[i] <= amount)
+        sort(coins.begin(), coins.end(), [](const int &a, const int &b)
+             { return a > b; }); // Sort coins in decreasing order of value
+        int i = 0;
+        while (amount > 0)
         {
-            int coin = amount / coins[i];
-            cout << coins[i] << ":" << coin << endl;
-            amount -= (coin * coins[i]);
+            if (coins[i] <= amount)
+            {
+                int coin = amount / coins[i];
+                cout << coins[i] << ":" << coin << endl;
+                amount -= (coin * coins[i]);
+            }
+            i++;
         }
-        i++;
     }
-}
+};
 
 // 2 Fractional Knapsack, T(n)=O(n*logn)
 struct Item
@@ -57,26 +63,30 @@ bool compEff(const Item &a, const Item &b)
 
     return eff_a > eff_b;
 }
-double fractionalKnapsack(int W, Item arr[], int n)
+class FractionalKnapsack
 {
-    // Your code here
-    sort(arr, arr + n, compEff); // sort by decreasing value/Weight
-    double maxValue = 0.0;
-    for (int i = 0; i < n && W > 0; i++)
+public:
+    double fractionalKnapsack(int W, Item arr[], int n)
     {
-        if (arr[i].weight <= W) // pick whole item
+        // Your code here
+        sort(arr, arr + n, compEff); // sort by decreasing value/Weight
+        double maxValue = 0.0;
+        for (int i = 0; i < n && W > 0; i++)
         {
-            maxValue += arr[i].value;
-            W -= arr[i].weight;
+            if (arr[i].weight <= W) // pick whole item
+            {
+                maxValue += arr[i].value;
+                W -= arr[i].weight;
+            }
+            else // fractional Item
+            {
+                maxValue += (arr[i].value * 1.0) * (W / (1.0 * arr[i].weight));
+                W = 0;
+            }
         }
-        else // fractional Item
-        {
-            maxValue += (arr[i].value * 1.0) * (W / (1.0 * arr[i].weight));
-            W = 0;
-        }
+        return maxValue;
     }
-    return maxValue;
-}
+};
 
 // 3 Railway platforms required with platform/ room no
 class MinMeetingRooms
@@ -142,28 +152,7 @@ public:
     }
 };
 
-// 5 Interal Covering with min points
-int findMinArrowShots(vector<vector<int>> &points)
-{
-    sort(points.begin(), points.end(), [](vector<int> const &a, vector<int> const &b)
-         { return a[1] < b[1]; }); // sort by end time
-
-    vector<int> ans;
-    int last = points[0][1];
-    ans.push_back(last);
-    // We will use activity selection and see which intervals are colliding
-    for (int i = 1; i < points.size(); i++)
-    {
-        if (points[i][0] > last) // new point needed since no collision for this interval
-        {
-            last = points[i][1]; // new point
-            ans.push_back(last);
-        }
-    }
-    return ans.size();
-}
-
-// 6 Merge Intervals
+// 5 Merge Intervals
 vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
 { /*
      a. Sort by start time, the first interval's start time will be the same as sorted list's 1st interval's start time
@@ -191,36 +180,8 @@ vector<vector<int>> mergeIntervals(vector<vector<int>> &intervals)
     merged.push_back(last); // push the last remaining interval
     return merged;
 }
-// 7 Insert Interval
-vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval)
-{
-    vector<vector<int>> merged;
 
-    int i = 0; // to keep track of which interval we are processing right now
-    while (i < intervals.size() && intervals[i][1] < newInterval[0])
-    {
-        merged.push_back(intervals[i]); // push interval if  start of new interval> end of interval we are processing
-        i++;
-    }
-    // we might have encountered an end time which is greater than start of new interval so new interval might have an overlap
-    while (i < intervals.size() && intervals[i][0] <= newInterval[1]) // start of current interval <= end of new interval there is overlap
-    {
-        newInterval[0] = min(newInterval[0], intervals[i][0]);
-        newInterval[1] = max(newInterval[1], intervals[i][1]);
-        i++;
-    }
-    merged.push_back(newInterval);
-
-    while (i < intervals.size())
-    {
-        merged.push_back(intervals[i]);
-        i++;
-    }
-    return merged;
-}
-
-//  Job Scheduling
-// url:https : //practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1#
+// 6  Job Scheduling
 struct Job
 {
     int id;     // Job Id
@@ -233,39 +194,6 @@ bool comp(const Job &a, const Job &b)
     return a.profit > b.profit;
 }
 
-// T(n)=O(nlogn + n*maxDeadline) if maxDeadline is n then O(n^2)
-vector<int> JobScheduling(Job arr[], int n)
-{
-
-    int maxDeadline = -1;
-    for (int i = 0; i < n; i++)
-        maxDeadline = max(maxDeadline, arr[i].dead);
-
-    // to store which id is executed at what time
-    vector<int> allocated(maxDeadline + 1, -1);
-    sort(arr, arr + n, comp);
-
-    int count = 0;
-    int maxProfit = 0;
-    for (int i = 0; i < n; i++)
-    {
-        int deadline = arr[i].dead;
-        for (int j = deadline; j > 0; j--)
-        {
-            if (allocated[j] == -1)
-            {
-                allocated[j] = arr[i].id;
-                count++;
-                maxProfit += arr[i].profit;
-                break;
-            }
-        }
-    }
-    // returns no of jobs and maxProfit
-    return {count, maxProfit};
-}
-
-// T(n)=O(nlogn +nlogn(only path compression used not unoin by rank) )
 class DSU
 {
     int *parents;
@@ -295,29 +223,114 @@ public:
         parents[super_y] = super_x;
     }
 };
-vector<int> JobSchedulingFast(Job arr[], int n)
+class JobScheduling
 {
-
-    int maxDeadline = -1;
-    for (int i = 0; i < n; i++)
-        maxDeadline = max(maxDeadline, arr[i].dead);
-
-    DSU allocated(maxDeadline);
-    sort(arr, arr + n, comp);
-
-    int count = 0;
-    int maxProfit = 0;
-    for (int i = 0; i < n; i++)
+public:
+    // T(n)=O(nlogn + n*maxDeadline) if maxDeadline is n then O(n^2)
+    vector<int> JobSchedulingSlow(Job arr[], int n)
     {
-        int available = allocated.get_superParent(arr[i].dead);
 
-        if (available > 0)
+        int maxDeadline = -1;
+        for (int i = 0; i < n; i++)
+            maxDeadline = max(maxDeadline, arr[i].dead);
+
+        // to store which id is executed at what time
+        vector<int> allocated(maxDeadline + 1, -1);
+        sort(arr, arr + n, comp);
+
+        int count = 0;
+        int maxProfit = 0;
+        for (int i = 0; i < n; i++)
         {
-            allocated.unite(available - 1, available);
-            count++;
-            maxProfit += arr[i].profit;
+            int deadline = arr[i].dead;
+            for (int j = deadline; j > 0; j--)
+            {
+                if (allocated[j] == -1)
+                {
+                    allocated[j] = arr[i].id;
+                    count++;
+                    maxProfit += arr[i].profit;
+                    break;
+                }
+            }
+        }
+        // returns no of jobs and maxProfit
+        return {count, maxProfit};
+    }
+    // T(n)=O(nlogn +nlogn(only path compression used not unoin by rank) )
+    vector<int> JobSchedulingFast(Job arr[], int n)
+    {
+
+        int maxDeadline = -1;
+        for (int i = 0; i < n; i++)
+            maxDeadline = max(maxDeadline, arr[i].dead);
+
+        DSU allocated(maxDeadline);
+        sort(arr, arr + n, comp);
+
+        int count = 0;
+        int maxProfit = 0;
+        for (int i = 0; i < n; i++)
+        {
+            int available = allocated.get_superParent(arr[i].dead);
+
+            if (available > 0)
+            {
+                allocated.unite(available - 1, available);
+                count++;
+                maxProfit += arr[i].profit;
+            }
+        }
+        // returns no of jobs and maxProfit
+        return {count, maxProfit};
+    }
+};
+
+// 7 Insert Interval
+vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval)
+{
+    vector<vector<int>> merged;
+
+    int i = 0; // to keep track of which interval we are processing right now
+    while (i < intervals.size() && intervals[i][1] < newInterval[0])
+    {
+        merged.push_back(intervals[i]); // push interval if  start of new interval> end of interval we are processing
+        i++;
+    }
+    // we might have encountered an end time which is greater than start of new interval so new interval might have an overlap
+    while (i < intervals.size() && intervals[i][0] <= newInterval[1]) // start of current interval <= end of new interval there is overlap
+    {
+        newInterval[0] = min(newInterval[0], intervals[i][0]);
+        newInterval[1] = max(newInterval[1], intervals[i][1]);
+        i++;
+    }
+    merged.push_back(newInterval);
+
+    while (i < intervals.size())
+    {
+        merged.push_back(intervals[i]);
+        i++;
+    }
+    return merged;
+}
+
+// 8 Interal Covering with min points
+int findMinArrowShots(vector<vector<int>> &points)
+{
+    sort(points.begin(), points.end(), [](vector<int> const &a, vector<int> const &b)
+         { return a[1] < b[1]; }); // sort by end time
+
+    vector<int> ans;
+    int last = points[0][1];
+    ans.push_back(last);
+    // We will use activity selection and see which intervals are colliding
+    for (int i = 1; i < points.size(); i++)
+    {
+        if (points[i][0] > last) // new point needed since no collision for this interval
+        {
+            last = points[i][1]; // new point
+            ans.push_back(last);
         }
     }
-    // returns no of jobs and maxProfit
-    return {count, maxProfit};
+    return ans.size();
 }
