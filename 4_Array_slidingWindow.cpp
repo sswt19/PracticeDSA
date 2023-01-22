@@ -12,6 +12,18 @@
 using namespace std;
 #define ll long long
 /*
+
+Hashing
+1. Longest Consecutive Sequence
+    https://leetcode.com/problems/longest-consecutive-sequence/description/
+2. Largest subarray with 0 sum
+    https://practice.geeksforgeeks.org/problems/largest-subarray-with-0-sum/1
+3. Count number of subarrays with given Xor K/ Count Subarray Sum Equals K
+    https://leetcode.com/problems/subarray-sum-equals-k/
+    https://www.codingninjas.com/codestudio/problems/1115652
+4. Count Subarray Sums Divisible by K
+    https://leetcode.com/problems/subarray-sums-divisible-by-k/
+
 Sliding Window pattern:
 1. Maximum Average Subarray I https://leetcode.com/problems/maximum-average-subarray-i/
 2. Minimum Size Subarray Sum:https://leetcode.com/problems/minimum-size-subarray-sum/
@@ -19,11 +31,162 @@ Sliding Window pattern:
 4. Fruit Into Baskets:https://leetcode.com/problems/fruit-into-baskets/
 5. Longest Substring Without Repeating Characters: https://leetcode.com/problems/longest-substring-without-repeating-characters/
 
-
-
-
  Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
 */
+
+// Hashing
+// 1. Longest Consecutive Sequence
+class LongestConsSeq
+{ /*
+     LC solution similar but better implementation
+     def longestConsecutive(self, nums):
+         nums = set(nums)
+         best = 0
+         for x in nums:
+             if x - 1 not in nums:
+                 y = x + 1
+                 while y in nums:
+                     y += 1
+                 best = max(best, y - x)
+         return best
+ */
+public:
+    int longestConsecutive(vector<int> &nums)
+    {
+
+        unordered_map<int, bool> marked; // to find which number is present in constant time
+        int streak = 0;
+
+        for (auto x : nums)
+            marked[x] = false; // false means this numbr has not been used in any sequence
+
+        for (auto x : nums)
+        {
+            if (marked[x] == false)
+            {
+                int cur = x;
+                while (marked.find(x) != marked.end()) // this loop finds start of sequence
+                    marked[x--] = true;
+                x++; // start of the sequence, we have 1 behind the sequence so add 1, x+1 is start of sequence
+
+                while (marked.find(cur) != marked.end()) // this loop finds end of sequnece
+                    marked[cur++] = true;
+                cur--; // end of the sequence, cur does not exist so we go 1 behind which was in hashmap
+
+                streak = max(streak, cur - x + 1);
+            }
+        }
+        return streak;
+    }
+};
+
+// 2 Largest subarray with 0 sum
+class MaxLenWithSum0
+{
+public:
+    int maxLen(vector<int> &arr, int n)
+    {
+        // Your code here
+        int csum = 0;
+        int maxL = 0;
+        unordered_map<int, int> um;
+        um[0] = -1; // for the case when subarray starts at index 0 not after 0
+
+        for (int i = 0; i < n; i++)
+        {
+            csum += arr[i];
+            if (um.find(csum) != um.end())
+                maxL = max(maxL, i - um[csum]);
+            else
+                um[csum] = i;
+        }
+        return maxL;
+    }
+};
+
+// 3 Count number of subarrays with given Xor K/ Count Subarray Sum Equals K
+class CountSubArrayXorORSumEqualToK
+{
+public:
+    int subarraySum(vector<int> &nums, int k)
+    {
+        int csum = 0;
+        int count = 0;
+        unordered_map<int, int> um;
+        um[0] = 1; // used for count when subarray starts with index 0
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            csum += nums[i];
+            if (um.find(csum - k) != um.end())
+                count += um[csum - k];
+            // adding current csum for future use
+            if (um.find(csum) == um.end())
+                um[csum] = 1;
+            else
+                um[csum] += 1;
+        }
+        return count;
+    }
+    int subarraysXor(vector<int> &nums, int k)
+    {
+        int cxor = 0;
+        int count = 0;
+        unordered_map<int, int> um;
+        um[0] = 1; // used for count when subarray starts with index 0
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            cxor ^= nums[i];
+            if (um.find(cxor ^ k) != um.end())
+                count += um[cxor ^ k];
+            // adding current cxor for future use
+            if (um.find(cxor) == um.end())
+                um[cxor] = 1;
+            else
+                um[cxor] += 1;
+        }
+        return count;
+    }
+};
+
+// 4 Count Subarray Sums Divisible by K
+class CountSubArraySumDivByK
+{
+public:
+    /*
+subarray sum b/w i+1 to j is csum[j]-csum[i]
+we need to know csum[j]-csum[i] is divisible by k
+i.e (csum[j]-cusm[i])%k==0
+    (csum[j]%k -csum[i]%k +k)%k==0
+remainder left by both are same then factor of k
+*/
+    int subarraysDivByK(vector<int> &nums, int k)
+    {
+        int csum = 0;
+        int count = 0;
+        unordered_map<int, int> um;
+        um[0] = 1;
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (nums[i] >= 0) // no problem with positive
+                csum = (csum + nums[i]) % k;
+            else // when adding negative to csum
+            {
+                int sub = abs(nums[i]) % k;
+                csum = (csum - sub + k) % k;
+            }
+            if (um.find(csum) != um.end()) // used to count of csum[i]s which gave same remainder as csum[j] for %k
+                count += um[csum];
+            if (um.find(csum) == um.end())
+                um[csum] = 1;
+            else
+                um[csum] += 1;
+        }
+        return count;
+    }
+};
 
 // 1
 double findMaxAverage(vector<int> &nums, int k)
