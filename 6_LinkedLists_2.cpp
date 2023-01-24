@@ -22,6 +22,8 @@ struct ListNode
     https://leetcode.com/problems/intersection-of-two-linked-lists/
 2. is Palindrome using constant space
     https://leetcode.com/problems/palindrome-linked-list/
+3. Rotate List
+    https://leetcode.com/problems/rotate-list/description/
 */
 
 // 1 Find intersection point of Y LinkedList
@@ -87,3 +89,47 @@ public:
         return isPal;
     }
 };
+
+// 3 Rotate List
+class RotateList
+{
+public:
+    ListNode *rotateRight(ListNode *head, int k)
+    {
+        if (!head)
+            return head;
+
+        // k can be larger than no of nodes in list, so we need to find the size of list first and set k
+        int listSize = 1;
+        ListNode *lastNode = head; // lastNode will be used to join the Last node to head later
+        while (lastNode->next)
+        {
+            listSize++;
+            lastNode = lastNode->next;
+        }
+
+        // compute number of rotations required since k can be 2*10^9 and list size can be only 500
+        k = k % listSize;
+        // no rotations needed
+        if (k == 0)
+            return head;
+
+        // find the new end node and break the LL there
+        int newEndPos = listSize - k;
+        auto newEndNode = head;
+        int i = 1;
+        while (i != newEndPos)
+        {
+            newEndNode = newEndNode->next;
+            i++;
+        }
+
+        // join the last node to head
+        lastNode->next = head;
+        head = newEndNode->next; // node next to endnode will be new head
+        newEndNode->next = NULL;
+        return head;
+    }
+};
+
+//

@@ -30,11 +30,16 @@ Sliding Window pattern:
 3. Longest Substring with At Most K Distinct Characters: https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
 4. Fruit Into Baskets:https://leetcode.com/problems/fruit-into-baskets/
 5. Longest Substring Without Repeating Characters: https://leetcode.com/problems/longest-substring-without-repeating-characters/
+6. Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
+7. Max consecutive ones: https://leetcode.com/problems/max-consecutive-ones/description/
 
- Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
 */
 
-// Hashing
+/*
+****
+Hashing
+****
+*/
 // 1. Longest Consecutive Sequence
 class LongestConsSeq
 { /*
@@ -188,6 +193,12 @@ remainder left by both are same then factor of k
     }
 };
 
+/****
+ *
+ Sliding Window
+ *
+*****/
+
 // 1
 double findMaxAverage(vector<int> &nums, int k)
 {
@@ -318,8 +329,7 @@ int lengthOfLongestSubstring(string str)
     return maxL;
 }
 
-// TODO: Add number to this problem
-//  Subarrays with Product Less than a Target
+// 6. Subarrays with Product Less than a Target
 int numSubarrayProductLessThanK(vector<int> &nums, int k)
 {
     int winS = 0, winE = 0;
@@ -343,5 +353,46 @@ int numSubarrayProductLessThanK(vector<int> &nums, int k)
     return count;
 }
 
-//
+// 7.Max consecutive ones
+
+class findMaxConsecutiveOne
+{
+public:
+    // using sliding window
+    int findMaxConsecutiveOnes(vector<int> &nums)
+    {
+        int winS = 0, winE = 0;
+        int maxLength = 0;
+        while (winE < nums.size())
+        {
+
+            if (nums[winE] == 1) // found start of one window
+            {
+                winS = winE;
+                while (winE < nums.size() && nums[winE] == 1)
+                    winE++;
+                // we might have reached end of array or encountered a 0, winE will point to 0 or is out of array now
+                maxLength = max(maxLength, winE - winS);
+            }
+            else
+                winE++;
+        }
+        return maxLength;
+    }
+    // other apporach just keep counting one and whenever we see 0 set count to 0
+    int findMaxConsecutiveOnes(vector<int> &nums)
+    {
+
+        int gl = 0, lc = 0;
+        for (auto x : nums)
+        {
+            if (x == 1)
+                gl = max(++lc, gl);
+            else
+                lc = 0;
+        }
+        return gl;
+    }
+};
+
 //
