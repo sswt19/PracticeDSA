@@ -47,6 +47,7 @@ struct TreeNode
 7. Largest BST in BT
     :https://www.codingninjas.com/codestudio/problems/893103
 8. Serialize and deserialize Binary Tree
+    :https://leetcode.com/problems/serialize-and-deserialize-binary-tree/
 */
 
 // 1
@@ -307,26 +308,23 @@ public:
     }
 };
 
-// 8
+// 8 Serialize and deserialize Binary Tree
 class Codec
 {
 public:
     // Encodes a tree to a single string.
     string serialize(TreeNode *root)
     {
-        // preorder traversal
+        // for leaf nodes
         if (!root)
             return "#";
-        // ',' used to find when number ends
+        // we will use preorder traversal,  ',' used to find when number ends
         return to_string(root->val) + "," + serialize(root->left) + "," + serialize(root->right);
     }
 
     // Decodes your encoded data to tree.
     TreeNode *deserialize(string data)
     {
-        if (data == "#")
-            return NULL;
-
         stringstream tree(data);
         return deserialize_helper(tree);
     }
@@ -340,7 +338,7 @@ public:
         else
         {
             TreeNode *root = new TreeNode(stoi(temp));
-            root->left = deserialize_helper(tree);  // first complete the left subtree since it was maid first
+            root->left = deserialize_helper(tree);  // first complete the left subtree since it was made first
             root->right = deserialize_helper(tree); // then the right subtree
             return root;
         }
