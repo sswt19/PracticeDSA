@@ -32,7 +32,7 @@ Sliding Window pattern:
 5. Longest Substring Without Repeating Characters: https://leetcode.com/problems/longest-substring-without-repeating-characters/
 6. Subarrays with Product Less than a Target: https://leetcode.com/problems/subarray-product-less-than-k/
 7. Max consecutive ones: https://leetcode.com/problems/max-consecutive-ones/description/
-
+8. Count distinct elements in every window: https://practice.geeksforgeeks.org/problems/count-distinct-elements-in-every-window/1
 */
 
 /*
@@ -395,4 +395,30 @@ public:
     }
 };
 
-//
+// 8. Count distinct elements in every window
+vector<int> countDistinct(int arr[], int n, int k)
+{
+    int winS = 0, winE = 0;
+    unordered_map<int, int> um;
+    vector<int> ans;
+    while (winE < n)
+    {
+        if (um.find(arr[winE]) == um.end()) // new element
+            um[arr[winE]] = 1;
+        else
+            um[arr[winE]] += 1;
+        while (winE - winS + 1 > k)
+        {
+            // decrease the window size by 1 from start
+            um[arr[winS]] -= 1;
+            if (um[arr[winS]] == 0)
+                um.erase(arr[winS]);
+            winS++;
+        }
+        if (winE - winS + 1 == k) // we got the window
+            ans.push_back(um.size());
+
+        winE++; // increase the window size by 1 from end
+    }
+    return ans;
+}

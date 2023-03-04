@@ -17,6 +17,20 @@ struct ListNode
     ListNode(int x) : val(x), next(nullptr) {}
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
+class Node
+{
+public:
+    int val;
+    Node *next;
+    Node *random;
+
+    Node(int _val)
+    {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
 /*
 1. Find intersection point of Y LinkedList
     https://leetcode.com/problems/intersection-of-two-linked-lists/
@@ -24,6 +38,8 @@ struct ListNode
     https://leetcode.com/problems/palindrome-linked-list/
 3. Rotate List
     https://leetcode.com/problems/rotate-list/description/
+4. Copy List with Random Pointer
+    https://leetcode.com/problems/copy-list-with-random-pointer/description/
 */
 
 // 1 Find intersection point of Y LinkedList
@@ -132,4 +148,81 @@ public:
     }
 };
 
+// 4 Copy List with Random Pointer
+class CopyListWithRandomPointer
+{
+public:
+    Node *copyRandomListUsingHashMap(Node *head)
+    {
+        if (!head)
+            return head;
+
+        // using hash map
+        unordered_map<Node *, Node *> um_copy;
+        Node *temp = head;
+        um_copy[temp] = new Node(temp->val); // create copy of head node
+        while (temp)
+        {
+            // next and random pointer copy we will make
+            if (temp->random)
+            {
+                if (um_copy.find(temp->random) == um_copy.end()) // no copy of this node exists yet
+                    um_copy[temp->random] = new Node(temp->random->val);
+                // now point to the same random pointer
+                um_copy[temp]->random = um_copy[temp->random];
+            }
+            if (temp->next)
+            {
+                if (um_copy.find(temp->next) == um_copy.end()) // no copy of this node exists yet
+                    um_copy[temp->next] = new Node(temp->next->val);
+                // now point to the same next pointer
+                um_copy[temp]->next = um_copy[temp->next];
+            }
+            temp = temp->next;
+        }
+        return um_copy[head];
+    }
+    /*
+        The algorithm is composed of the follow three steps which are also 3 iteration rounds.
+            1.Iterate the original list and duplicate each node. The duplicate of each node follows its original immediately.
+            2. Iterate the new list and assign the random pointer for each duplicated node.
+            3.Restore the original list and extract the duplicated nodes.
+    */
+    Node *copyRandomListO1Space(Node *head)
+    {
+        if (!head)
+            return NULL;
+        // Step 1
+        Node *temp = head, *copy;
+        while (temp)
+        {
+            copy = new Node(temp->data);
+            copy->next = temp->next;
+            temp->next = copy;
+            temp = temp->next->next;
+        }
+        // Step 2
+        temp = head;
+        while (temp)
+        {
+            copy = temp->next;
+            copy->random = temp->random ? temp->random->next : NULL;
+            temp = temp->next->next;
+        }
+        // Step 3
+        Node *ans = head->next;
+        copy = ans;
+
+        while (copy && copy->next)
+        {
+            head->next = head->next->next;
+            copy->next = copy->next->next;
+
+            head = head->next;
+            copy = copy->next;
+        }
+        head->next = NULL;
+        return ans;
+    }
+};
 //
