@@ -21,42 +21,47 @@ struct TreeNode
 
 /*
 1. Search Given Key in BST
+    :https://leetcode.com/problems/search-in-a-binary-search-tree/description/
 2. Insert in BST
 3. Sorted array to balanced BST
+    :https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/description/
 4. check BT is BST
 5. LCA in BST
 6. Find the inorder predecessor/next smaller of a given Key in BST.
-7. Find the inorder successor/next greater of a given Key in BST.  
+7. Find the inorder successor/next greater of a given Key in BST.
 */
-//1
-TreeNode *searchBST_rec(TreeNode *root, int val)
+// 1 Search Given Key in BST
+class SearchKeyInBST
 {
-    if (!root)
-        return NULL;
-    //same as BS
-    if (root->val == val)
-        return root;
-    else if (root->val > val)
-        return searchBST_rec(root->left, val);
-    else
-        return searchBST_rec(root->right, val);
-}
-TreeNode *searchBST_Iterative(TreeNode *root, int val)
-{
-    if (!root)
-        return NULL;
-    while (root)
+public:
+    TreeNode *searchBST_rec(TreeNode *root, int val)
     {
+        if (!root)
+            return NULL;
+        // same as BS
         if (root->val == val)
             return root;
         else if (root->val > val)
-            root = root->left;
+            return searchBST_rec(root->left, val);
         else
-            root = root->right;
+            return searchBST_rec(root->right, val);
     }
-    return NULL;
-}
-//2
+    TreeNode *searchBST_Iterative(TreeNode *root, int val)
+    {
+        while (root)
+        {
+            if (root->val == val)
+                return root;
+            else if (root->val > val)
+                root = root->left;
+            else
+                root = root->right;
+        }
+        return NULL; // was not present
+    }
+};
+
+// 2
 TreeNode *insertIntoBSTRec(TreeNode *root, int val)
 {
     if (!root)
@@ -74,7 +79,7 @@ TreeNode *insertIntoBST(TreeNode *root, int val)
     TreeNode *last = NULL, *temp = root;
     while (temp)
     {
-        last = temp; //since temp will become NULL we need to know the parent node where we insert new node
+        last = temp; // since temp will become NULL we need to know the parent node where we insert new node
         if (temp->val > val)
             temp = temp->left;
         else
@@ -86,24 +91,32 @@ TreeNode *insertIntoBST(TreeNode *root, int val)
         last->right = new TreeNode(val);
     return root;
 }
-//3
-TreeNode *sortedToBSTRec(vector<int> &nums, int s, int e)
-{
-    if (s > e)
-        return NULL;
-    int mid = s + (e - s) / 2;
 
-    TreeNode *root = new TreeNode(nums[mid]);
-    root->left = sortedToBSTRec(nums, s, mid - 1);
-    root->right = sortedToBSTRec(nums, mid + 1, e);
-    return root;
-}
-TreeNode *sortedArrayToBST(vector<int> &nums)
+// 3 Construct BST from given keys
+class SortedArrToBST
 {
-    return sortedToBSTRec(nums, 0, nums.size() - 1);
-}
+public:
+    TreeNode *sortedArrayToBST(vector<int> &nums)
+    {
+        return sortedToBSTRec(nums, 0, nums.size() - 1);
+    }
 
-//4
+    TreeNode *sortedToBSTRec(vector<int> &nums, int s, int e)
+    {
+        if (s > e) // for leaf nodes
+            return NULL;
+
+        int mid = s + (e - s) / 2;
+        TreeNode *root = new TreeNode(nums[mid]);
+        // set the left and right subtree
+        root->left = sortedToBSTRec(nums, s, mid - 1);
+        root->right = sortedToBSTRec(nums, mid + 1, e);
+
+        return root;
+    }
+};
+
+// 4
 class Solution
 {
 public:
@@ -126,14 +139,14 @@ public:
         {
             long long rootVal = root->val;
             long long minV = min(rootVal, left.first);   // in case left child is null root->val should be min value
-            long long maxV = max(rootVal, right.second); //similarly for right child
+            long long maxV = max(rootVal, right.second); // similarly for right child
             return {minV, maxV};
         }
         valid = false;
         return {-1, -1};
     }
 };
-//my bottom up before
+// my bottom up before
 class ValidBSTBottomUp
 {
 public:
@@ -147,7 +160,7 @@ public:
     pair<int, int> isBSTBottomUp(TreeNode *root, bool &valid)
     {
         if (!root)                       // not a base case
-            return {-1, -1};             //will never be called unless the tree is null
+            return {-1, -1};             // will never be called unless the tree is null
         if (!root->left && !root->right) // base case
             return {root->val, root->val};
         if (!root->left) // donot call on left if not present
@@ -193,13 +206,13 @@ public:
         return false;
     }
 };
-//Iterative Inorder the next value should be higher then last
+// Iterative Inorder the next value should be higher then last
 bool isValidBST(TreeNode *root)
 {
     if (!root)
         return true;
 
-    //using inorder LNR
+    // using inorder LNR
     stack<TreeNode *> st;
     while (root)
     {
@@ -228,7 +241,7 @@ bool isValidBST(TreeNode *root)
 // 5
 TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
 {
-    //if not confirmed both are present or not
+    // if not confirmed both are present or not
     /*
     bool present1=searchBST_Iterative(root,p->val);
     bool present2=searchBST_Iterative(root,q->val);
@@ -246,8 +259,8 @@ TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
     }
     return root;
 }
-//6
-//Check why go right and all left will not work
+// 6
+// Check why go right and all left will not work
 TreeNode *getPredeccessor(TreeNode *root, int B)
 {
     TreeNode *nextSmaller = NULL;
@@ -259,11 +272,11 @@ TreeNode *getPredeccessor(TreeNode *root, int B)
             root = root->right; // since everything on left subtree will be smaller than root and smaller than B they can't be next smaller value
         }
         else
-            root = root->left; //since current value is greater or equal to B the next smaller is in left subtree
+            root = root->left; // since current value is greater or equal to B the next smaller is in left subtree
     }
     return nextSmaller;
 }
-//7
+// 7
 TreeNode *getSuccessor(TreeNode *root, int B)
 {
     TreeNode *nextGreater = NULL;
@@ -275,11 +288,11 @@ TreeNode *getSuccessor(TreeNode *root, int B)
             root = root->left; // since weverything on right subtree will be greater than root and grater than B they can't be next greater value
         }
         else
-            root = root->right; //since current value is less or equal to B the next greater is in right subtree
+            root = root->right; // since current value is less or equal to B the next greater is in right subtree
     }
     return nextGreater;
 }
-//This one is what I thought at first
+// This one is what I thought at first
 TreeNode *getSuccessor(TreeNode *root, int val)
 {
     TreeNode *nextGreater = NULL;
