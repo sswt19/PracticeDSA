@@ -19,8 +19,10 @@ struct TreeNode
 };
 /*
 1. Level Order Traversal
+    :https://leetcode.com/problems/binary-tree-level-order-traversal/description/
 1.1 Level Order Successor
 2. Level order traversal in spiral form/Zig-Zag
+    :https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/description/
 3. Left View of BTree
 4. Right View Of Binary Tree
 5. Top View of Binary Tree
@@ -35,94 +37,103 @@ struct TreeNode
 */
 
 // 1 LOT
-vector<vector<int>> levelOrder(TreeNode *root)
+class LOT
 {
-    vector<vector<int>> levels;
-    if (!root)
-        return levels;
-
-    queue<TreeNode *> q;
-    q.push(root);
-    while (!q.empty())
+public:
+    vector<vector<int>> levelOrder(TreeNode *root)
     {
-        int size = q.size(); // Gives the no of nodes in level we will be processing
-        vector<int> lev(size);
-        for (int i = 0; i < size; i++)
-        {
-            auto temp = q.front();
-            q.pop();
-            lev[i] = temp->val;
-            // Push Children to queue
-            if (temp->left)
-                q.push(temp->left);
-            if (temp->right)
-                q.push(temp->right);
-        }
-        levels.push_back(lev);
-    }
-    return levels;
-}
-// 1.1 LOT successor
-int levelOrder(TreeNode *root, int key)
-{
-    if (!root)
-        return -1;
+        vector<vector<int>> levels;
+        if (!root)
+            return levels;
 
-    queue<TreeNode *> q;
-    q.push(root);
-    while (!q.empty())
-    {
-        int size = q.size(); // Gives the no of nodes in level we will be processing
-
-        for (int i = 0; i < size; i++)
+        queue<TreeNode *> q;
+        q.push(root);
+        while (!q.empty())
         {
-            auto temp = q.front();
-            q.pop();
-            // Push Children to queue
-            if (temp->left)
-                q.push(temp->left);
-            if (temp->right)
-                q.push(temp->right);
-            // check for level order successor only when it's children are pushed, Ex test case successor of root node
-            if (temp->val == key)
-                return q.empty() ? -1 : q.front()->val; // if q is empty no LS exist so return -1
-        }
-    }
-    return -1; // key does not exist return -1
-}
-// 2 Zig-Zag/Spiral LOT
-vector<vector<int>> zigzagLevelOrder(TreeNode *root)
-{
-    vector<vector<int>> levels;
-    if (!root)
-        return levels;
-
-    queue<TreeNode *> q;
-    q.push(root);
-    int reverseOrder = 0;
-    while (!q.empty())
-    {
-        int size = q.size();
-        vector<int> lev(size);
-        for (int i = 0; i < size; i++)
-        {
-            auto temp = q.front();
-            q.pop();
-            if (reverseOrder) // insert from end if odd height
-                lev[size - 1 - i] = temp->val;
-            else
+            int size = q.size(); // Gives the no of nodes in level we will be processing
+            vector<int> lev(size);
+            for (int i = 0; i < size; i++)
+            {
+                auto temp = q.front();
+                q.pop();
                 lev[i] = temp->val;
-
-            if (temp->left)
-                q.push(temp->left);
-            if (temp->right)
-                q.push(temp->right);
+                // Push Children to queue
+                if (temp->left)
+                    q.push(temp->left);
+                if (temp->right)
+                    q.push(temp->right);
+            }
+            levels.push_back(lev);
         }
-        reverseOrder = reverseOrder ^ 1; // alternate the reverseOrder
-        levels.push_back(lev);
+        return levels;
     }
-    return levels;
-}
+    // 1.1 LOT successor
+    int levelOrderSuccessor(TreeNode *root, int key)
+    {
+        if (!root)
+            return -1;
+
+        queue<TreeNode *> q;
+        q.push(root);
+        while (!q.empty())
+        {
+            int size = q.size(); // Gives the no of nodes in level we will be processing
+
+            for (int i = 0; i < size; i++)
+            {
+                auto temp = q.front();
+                q.pop();
+                // Push Children to queue
+                if (temp->left)
+                    q.push(temp->left);
+                if (temp->right)
+                    q.push(temp->right);
+                // check for level order successor only when it's children are pushed, Ex test case successor of root node
+                if (temp->val == key)
+                    return q.empty() ? -1 : q.front()->val; // if q is empty no LS exist so return -1
+            }
+        }
+        return -1; // key does not exist return -1
+    }
+};
+
+// 2 Zig-Zag/Spiral LOT
+class LOT_ZZ
+{
+public:
+    vector<vector<int>> zigzagLevelOrder(TreeNode *root)
+    {
+        if (!root)
+            return {};
+
+        vector<vector<int>> levels;
+        queue<TreeNode *> q;
+        q.push(root);
+        int odd_hight = true;
+        while (!q.empty())
+        {
+            int size = q.size();
+            vector<int> lev(size);
+            for (int i = 0; i < size; i++)
+            {
+                auto temp = q.front();
+                q.pop();
+                if (odd_hight) // insert from end if odd height
+                    lev[i] = temp->val;
+                else
+                    lev[size - 1 - i] = temp->val;
+
+                if (temp->left)
+                    q.push(temp->left);
+                if (temp->right)
+                    q.push(temp->right);
+            }
+            odd_hight = !odd_hight; // alternate the reverseOrder
+            levels.push_back(lev);
+        }
+        return levels;
+    }
+};
 
 // 3 LeftView
 vector<int> leftSideView(TreeNode *root)

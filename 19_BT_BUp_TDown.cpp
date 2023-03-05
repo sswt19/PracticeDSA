@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <list>
-#include <bits/stdc++.h>
+
 using namespace std;
 using ll = long long;
 struct TreeNode
@@ -27,7 +27,9 @@ Top Down: Passing down information of parent node to lower nodes
 Bottom Up:
     1. MinDepth
     2. MaxDepth
+        :https://leetcode.com/problems/maximum-depth-of-binary-tree/description/
     3. Check Height Balanced BT
+        :https://leetcode.com/problems/balanced-binary-tree/description/
     4. Diameter of BT
     5. Path from root to given node
     6. LCA
@@ -38,8 +40,11 @@ Bottom Up:
 
 Top Down: Passing down information of parent node to lower nodes
     1. Check two trees are same
+        :https://leetcode.com/problems/same-tree/description/
     2. A tree is symmetric or 2 trees are mirror of each other
-    3. Count Good Nodes in Binary Tree
+        :https://leetcode.com/problems/symmetric-tree/
+    3. Invert a Binary Tree
+        :https://practice.geeksforgeeks.org/problems/mirror-tree
     4. Path Sum II
         :https://leetcode.com/problems/path-sum-ii/
     5. Sum Root to Leaf Numbers
@@ -48,8 +53,13 @@ Top Down: Passing down information of parent node to lower nodes
         :https://leetcode.com/problems/check-if-a-string-is-a-valid-sequence-from-root-to-leaves-path-in-a-binary-tree/
     7. Count Paths for a Sum (Hard)
         :https://leetcode.com/problems/path-sum-iii/
-
+    8. Count Good Nodes in Binary Tree
 */
+
+/*
+==================================== Bottom Up =======================================================
+*/
+
 // 1
 int minDepth(TreeNode *root)
 {
@@ -63,33 +73,41 @@ int minDepth(TreeNode *root)
         return minDepth(root->left) + 1;
     return min(minDepth(root->right), minDepth(root->left)) + 1; // getting info from bottom row
 }
-// 2
-int maxDepth(TreeNode *root)
+// 2 MaxDepth
+class MaxDepth
 {
-    if (!root)
-        return 0;
-    return 1 + max(maxDepth(root->left), maxDepth(root->right));
-}
+public:
+    int maxDepth(TreeNode *root)
+    {
+        if (!root)
+            return 0;
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+};
 
-// 3
-/*
-For each node the difference between left and right subtree can be max 1
-*/
-pair<bool, int> isBalanced(TreeNode *root)
+// 3 Check Height Balanced BT
+class IsBalancedBT
 {
-    // we will get if both left and right subtree are balanced as well as their height to get height difference
-    if (!root) // base case
-        return {true, 0};
+    /*
+        For each node the difference between left and right subtree can be max 1
+    */
+public:
+    pair<bool, int> isBalanced(TreeNode *root)
+    {
+        // we will get if both left and right subtree are balanced as well as their height to get height difference
+        if (!root) // base case
+            return {true, 0};
 
-    // get info from child nodes
-    auto left = isBalanced(root->left);
-    auto right = isBalanced(root->right);
+        // get info from child nodes
+        auto left = isBalanced(root->left);
+        auto right = isBalanced(root->right);
 
-    if (left.first && right.first && abs(left.second - right.second) <= 1)
-        return {true, max(left.second, right.second) + 1};
+        bool isBalanced = left.first && right.first && abs(left.second - right.second) <= 1;
+        int height = max(left.second, right.second) + 1;
+        return {isBalanced, height};
+    }
+};
 
-    return {false, -1};
-}
 // 4 The diameter of a binary tree is the length of the longest path between any two nodes in a tree.This path may or may not pass through the root.
 
 pair<int, int> diameterOfBT(TreeNode *root)
@@ -273,52 +291,67 @@ public:
         return maxPathWithCurrentNode;
     }
 };
+
 /*
-Top Down
+==================================== Top Down =======================================================
 */
 
-// 1 identical tree
-bool isSameTree(TreeNode *p, TreeNode *q)
+// 1 Identical trees
+class areTwoTreesSame
 {
-    if (p == NULL && q == NULL)
-        return true;
-    if (p && q)
-        return (p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right));
-    else // only one of the node is present
-        return false;
-}
-// 2 A tree is symmetric or  2 trees are mirror of each other
-bool isSymmetric(TreeNode *root)
+public:
+    bool isSameTree(TreeNode *p, TreeNode *q)
+    {
+        if (p == NULL && q == NULL) // both not present
+            return true;
+        if (p && q)
+            return (p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right));
+        else // only one of the node is present
+            return false;
+    }
+};
+// 2 A tree is symmetric or trees are mirror of each other
+class isSymmetricTree
 {
-    if (!root)
-        return true;
-    return isSym(root->left, root->right);
-}
-bool isSym(TreeNode *root1, TreeNode *root2)
-{
-    if (!root1 && !root2)
-        return true;
-    if (root1 && root2)
-        return root1->val == root2->val && isSym(root1->left, root2->right) && isSym(root1->right, root2->left);
+public:
+    bool isSymmetric(TreeNode *root)
+    {
+        if (!root)
+            return true;
+        return isSym(root->left, root->right);
+    }
+    bool isSym(TreeNode *root1, TreeNode *root2)
+    {
+        if (!root1 && !root2)
+            return true;
+        // this logic is the only change b/w areTwoTreesSame and isSymmetricTree
+        if (root1 && root2)
+            // we will compare left with right and vice-versa
+            return root1->val == root2->val && isSym(root1->left, root2->right) && isSym(root1->right, root2->left);
+        else
+            return false;
+    }
+};
 
-    return false;
-}
-// 3 Count Good Nodes:Given a binary tree root, a node X in the tree is named good if in the path from root to X there are no nodes with a value greater than X.
-int goodNodes(TreeNode *root)
+// 3
+class ConvertTreeToItsMirror
 {
-    int goodCount = 0;
-    goodNodes(root, goodCount, INT_MIN);
-    return goodCount;
-}
-void goodNodes(TreeNode *root, int &ans, int maxValue)
-{
-    if (!root)
-        return;
-    if (root->val >= maxValue)
-        ans++;
-    goodNodes(root->left, ans, max(maxValue, root->val));
-    goodNodes(root->right, ans, max(maxValue, root->val));
-}
+public:
+    // Function to convert a binary tree into its mirror tree.
+    void mirror(TreeNode *node)
+    {
+        if (!node)
+            return;
+
+        auto temp = node->left;
+        node->left = node->right;
+        node->right = temp;
+
+        mirror(node->left);
+        mirror(node->right);
+    }
+};
+
 // 4
 class AllPathSum
 {
@@ -466,3 +499,25 @@ public:
         pst[currentSum] -= 1;    // decreasing the count of current prefix as we are backtracking
     }
 };
+
+// 8 Count Good Nodes
+/*
+Given a binary tree root, a node X in the tree is named good if in the path from root to X
+there are no nodes with a value greater than X.
+*/
+int goodNodes(TreeNode *root)
+{
+    int goodCount = 0;
+    goodNodes(root, goodCount, INT_MIN);
+    return goodCount;
+}
+void goodNodes(TreeNode *root, int &ans, int maxValue)
+{
+    if (!root)
+        return;
+    if (root->val >= maxValue)
+        ans++;
+    goodNodes(root->left, ans, max(maxValue, root->val));
+    goodNodes(root->right, ans, max(maxValue, root->val));
+}
+//

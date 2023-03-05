@@ -20,8 +20,11 @@ struct TreeNode
 
 /*
 1. Inorder Iterative and Recursive
+    :https://leetcode.com/problems/binary-tree-inorder-traversal/
 2. PreOrder Iterative and Recursive
+    :https://leetcode.com/problems/binary-tree-preorder-traversal/
 3. PostOrder Iterative and Recursive
+    :https://leetcode.com/problems/binary-tree-postorder-traversal/
 4. Tree from Preorder and Inorder
 5. Tree from Inorder and PostOrder
 6.

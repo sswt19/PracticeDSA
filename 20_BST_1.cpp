@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <list>
 using namespace std;
-
+using ll = long long;
 struct TreeNode
 {
     int val;
@@ -26,6 +26,7 @@ struct TreeNode
 3. Sorted array to balanced BST
     :https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/description/
 4. check BT is BST
+    :https://leetcode.com/problems/validate-binary-search-tree/
 5. LCA in BST
 6. Find the inorder predecessor/next smaller of a given Key in BST.
 7. Find the inorder successor/next greater of a given Key in BST.
@@ -116,24 +117,23 @@ public:
     }
 };
 
-// 4
-class Solution
+// 4 check BT is BST
+class ValidBST
 {
+    /*
+    1.BT
+    2.TD
+    3.Iterative
+    */
 public:
-    bool isValidBST(TreeNode *root)
-    {
-        bool valid = true;
-        isBST(root, valid);
-        return valid;
-    }
-
-    pair<long long, long long> isBST(TreeNode *root, bool &valid)
+    // 1 BU, we will set the valid variable
+    pair<long long, long long> isBSTbottomUp(TreeNode *root, bool &valid)
     {
         if (!root)
             return {1e14, -1e14};
 
-        auto left = isBST(root->left, valid);
-        auto right = isBST(root->right, valid);
+        auto left = isBSTbottomUp(root->left, valid);
+        auto right = isBSTbottomUp(root->right, valid);
 
         if (left.second < root->val && right.first > root->val)
         {
@@ -145,99 +145,52 @@ public:
         valid = false;
         return {-1, -1};
     }
-};
-// my bottom up before
-class ValidBSTBottomUp
-{
-public:
-    bool isValidBST(TreeNode *root)
-    {
-        bool valid = true; // will be set to false if tree is not a bst at any node
-        isBSTBottomUp(root, valid);
-        return valid;
-    }
-
-    pair<int, int> isBSTBottomUp(TreeNode *root, bool &valid)
-    {
-        if (!root)                       // not a base case
-            return {-1, -1};             // will never be called unless the tree is null
-        if (!root->left && !root->right) // base case
-            return {root->val, root->val};
-        if (!root->left) // donot call on left if not present
-        {
-            auto right = isBSTBottomUp(root->right, valid);
-            if (right.first <= root->val)
-                valid = false;
-            return {root->val, right.second};
-        }
-        if (!root->right) // donot call on right if not present
-        {
-            auto left = isBSTBottomUp(root->left, valid);
-            if (left.second >= root->val)
-                valid = false;
-            return {left.first, root->val};
-        }
-        // both subtree exist for current node
-        auto left = isBSTBottomUp(root->left, valid);
-        auto right = isBSTBottomUp(root->right, valid);
-        if (left.second >= root->val || right.first <= root->val) // note: >= and <= since they can't be equal as well
-            valid = false;
-        return {left.first, right.second};
-    }
-};
-using ll = long long;
-class ValidBSTTopDown
-{
-public:
-    bool isValidBST(TreeNode *root)
-    {
-        return isBST(root, -1e14, 1e14);
-    }
-    bool isBST(TreeNode *root, ll mi, ll ma)
+    // 2 TD
+    bool isBSTTopDown(TreeNode *root, ll mi, ll ma)
     {
         if (!root)
             return true;
         if (root->val > mi && root->val < ma)
         {
-            bool left = isBST(root->left, mi, root->val);
-            bool right = isBST(root->right, root->val, ma);
+            bool left = isBSTTopDown(root->left, mi, root->val);
+            bool right = isBSTTopDown(root->right, root->val, ma);
             return left && right;
         }
         return false;
     }
-};
-// Iterative Inorder the next value should be higher then last
-bool isValidBST(TreeNode *root)
-{
-    if (!root)
-        return true;
-
-    // using inorder LNR
-    stack<TreeNode *> st;
-    while (root)
+    // 3 Iterative Inorder the next value should be higher then last
+    bool isValidBST(TreeNode *root)
     {
-        st.push(root);
-        root = root->left;
-    }
-    long long last = LONG_MIN;
-    while (!st.empty())
-    {
-        TreeNode *temp = st.top();
-        st.pop();
+        if (!root)
+            return true;
 
-        if (temp->val <= last)
-            return false;
-        last = temp->val;
-
-        temp = temp->right;
-        while (temp)
+        // using inorder LNR
+        stack<TreeNode *> st;
+        while (root)
         {
-            st.push(temp);
-            temp = temp->left;
+            st.push(root);
+            root = root->left;
         }
+        long long last = LONG_MIN;
+        while (!st.empty())
+        {
+            TreeNode *temp = st.top();
+            st.pop();
+
+            if (temp->val <= last)
+                return false;
+            last = temp->val;
+            temp = temp->right;
+            while (temp)
+            {
+                st.push(temp);
+                temp = temp->left;
+            }
+        }
+        return true;
     }
-    return true;
-}
+};
+
 // 5
 TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
 {

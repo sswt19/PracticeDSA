@@ -295,7 +295,7 @@ public:
         auto left = largestBst(root->left, Bst);
         auto right = largestBst(root->right, Bst);
 
-        // if left and right are BST and parent satisfies BST with children node, return new size and small and laege elements
+        // if left and right are BST and parent satisfies BST with children node, return new size and small and large elements
         if (left.first != -1 && right.first != -1 && root->data < right.second.first && root->data > left.second.second)
         {
             int size = 1 + left.first + right.first;           // new size
