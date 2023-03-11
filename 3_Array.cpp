@@ -19,7 +19,8 @@ using namespace std;
     1B. https://leetcode.com/problems/search-a-2d-matrix-ii/
         -Integers in each row are sorted in ascending from left to right.
         -Integers in each column are sorted in ascending from top to bottom.
-2. Pow(x, n) n can be negative:https://leetcode.com/problems/powx-n/
+2. Pow(x, n) n can be negative
+    :https://leetcode.com/problems/powx-n/
 3. Majority Element
     :https://leetcode.com/problems/majority-element/
 4. Majority Element 2
@@ -169,6 +170,14 @@ public:
 
         for (auto v : nums)
         {
+            /*
+                we will need to match for cand1 and cand2 at start.
+                we cannot assign v to cand1 or cand2 if the count is zero as we did in majority element 1,
+                cand1 and cand2 might become same values
+                Ex: test case where it will fail
+                    2,1,1,3,1,4,5,6
+                    both cand1 and cand2 will be set to 1 when we reach 5th element
+            */
             if (v == cand1)
                 count1++;
             else if (v == cand2)
