@@ -20,10 +20,12 @@ using namespace std;
         -Integers in each row are sorted in ascending from left to right.
         -Integers in each column are sorted in ascending from top to bottom.
 2. Pow(x, n) n can be negative:https://leetcode.com/problems/powx-n/
-3. Majority Element:https://leetcode.com/problems/majority-element/
-4. Majority Element 2: https://leetcode.com/problems/majority-element-ii/
+3. Majority Element
+    :https://leetcode.com/problems/majority-element/
+4. Majority Element 2
+    :https://leetcode.com/problems/majority-element-ii/
 */
-// 1
+// 1  Search a 2D Matrix
 class SearchMatrix
 {
 public:
@@ -73,7 +75,7 @@ public:
     }
 };
 
-// 2
+// 2 Pow(x, n)
 class PowNegative
 {
 public:
@@ -109,23 +111,31 @@ public:
     }
 };
 
-// 3
+// 3 Majority Element
 class MajorityElement
 {
-    // Boyer-Moore Majority Voting Algorithm
+    /*
+        Boyer - Moore Majority Voting Algorithm
+        we will form pairs with majority element and remaining elements will be majority
+    */
 
 public:
-    int majorityElement(vector<int> &nums)
+    int
+    majorityElement(vector<int> &nums)
     {
-        int count = 1;
-        int majElement = nums[0];
-        for (int i = 1; i < nums.size(); i++)
+        int count = 0;
+        int majElement = -1; // initialize with anything will be set with first if condition
+        for (auto v : nums)
         {
-            if (count == 0) // till (i-1)th index no majority element whenever count is 0 we mark a new majority element
-                majElement = nums[i];
-            if (majElement == nums[i]) // if matches increase count
+            if (count == 0) // till now no majority element whenever count is 0 we mark a new majority element
+            {
+                majElement = v;
+                count = 1;
+            }
+            else if (majElement == v) // if matches increase count
                 count++;
-            else // decrease count and if it becomes 0 then the next index will become majority element
+            else
+                //  pair of {current majE,v}, decrease count and if it becomes 0 then the next element will become majority element
                 count--;
         }
 
@@ -140,17 +150,22 @@ public:
         return majElement; // if given in the ques majority element always exist
     }
 };
-// 4
+
+// 4 Majority Element 2
 class MajorityElement2
 {
+    /*
+        majority element will be left after forming triplets  example (1,2,3) ,(1,2,3) ,(1,3)
+        We will form triplets with possible candidates
+    */
 public:
     vector<int> majorityElement(vector<int> &nums)
     {
         // there can be only two elements which are >n/3
-        // majority element will be left after forming triplets  example 1,2,3,1,2,3,1,3
         vector<int> majE;
-        int cand1 = -1, cand2 = -1;
-        int count1 = 0, count2 = 0;
+        int cand1, cand2, count1, count2;
+        cand1 = cand2 = INT_MIN; // initialize to values which will not be present in nums array
+        count1 = count2 = 0;
 
         for (auto v : nums)
         {
@@ -168,7 +183,7 @@ public:
                 cand2 = v;
                 count2 = 1;
             }
-            else
+            else // formed one triplet with {cand1,cand2,v}
             {
                 count1--;
                 count2--;
@@ -183,6 +198,7 @@ public:
             else if (v == cand2)
                 count2++;
         }
+        // found majority Elements
         if (count1 > nums.size() / 3)
             majE.push_back(cand1);
         if (count2 > nums.size() / 3)
