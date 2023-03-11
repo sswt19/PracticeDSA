@@ -25,6 +25,10 @@ using namespace std;
     :https://leetcode.com/problems/majority-element/
 4. Majority Element 2
     :https://leetcode.com/problems/majority-element-ii/
+5. Unique Paths
+    :https://leetcode.com/problems/unique-paths/description/
+6.  Reverse Pairs
+    :https://leetcode.com/problems/reverse-pairs/description/
 */
 // 1  Search a 2D Matrix
 class SearchMatrix
@@ -216,3 +220,88 @@ public:
         return majE;
     }
 };
+
+// 5 Unique Paths
+class UniquePaths
+{
+    /*
+        Permutation with repetition = n!/r1!*r2!..rk!
+        we have to go right m-1 times and down n-1 times
+        total ways= (m+n-2)!/(m-1)!*(n-1)!
+    */
+public:
+    long long uniquePaths(int m, int n)
+    {
+        return ncr(m + n - 2, m - 1);
+    }
+    long long ncr(int n, int r)
+    {
+        if (r > n - r)
+            return ncr(n, n - r);
+        long long ans = 1;
+        for (int i = 1; i <= r; i++)
+            ans = (ans * (n - r + i)) / i;
+
+        return ans;
+    }
+};
+
+// 6  Reverse Pairs
+class ReversePairs
+{
+public:
+    void merge(vector<int> &nums, int s, int e, int &count)
+    {
+        int mid = s + (e - s) / 2;
+        int i = s, j = mid + 1;
+
+        // The actual part of computing nums[i]>2*nums[j], we will not modify the array here but compute the Reverse pairs
+        while (i <= mid && j <= e)
+        {
+            long long numsi = nums[i];
+            long long numsj = nums[j];
+            if (numsi > 2 * numsj)
+            {
+                count += mid - i + 1;
+                j++;
+            }
+            else
+                i++;
+        }
+        // Merge sort merge functionality
+        i = s;                         // first sorted half start
+        j = mid + 1;                   // second sorted half start
+        vector<int> sorted(e - s + 1); // merged values will be stored here since we can't use the nums array
+        int k = 0;
+        while (i <= mid && j <= e)
+        {
+            if (nums[i] < nums[j])
+                sorted[k++] = nums[i++];
+            else
+                sorted[k++] = nums[j++];
+        }
+        while (i <= mid)
+            sorted[k++] = nums[i++];
+        while (j <= e)
+            sorted[k++] = nums[j++];
+        k = s;
+        for (auto v : sorted) // copy the sorted array to original array from index s to e
+            nums[k++] = v;
+    }
+    void mergeSort(vector<int> &nums, int s, int e, int &count)
+    {
+        if (s >= e)
+            return;
+        int mid = s + (e - s) / 2;
+        mergeSort(nums, s, mid, count);
+        mergeSort(nums, mid + 1, e, count);
+        merge(nums, s, e, count);
+    }
+    int reversePairs(vector<int> &nums)
+    {
+        int count = 0;
+        mergeSort(nums, 0, nums.size() - 1, count);
+        return count;
+    }
+};
+//
