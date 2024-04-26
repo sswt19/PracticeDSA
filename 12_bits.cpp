@@ -19,6 +19,9 @@ using namespace std;
     :https://leetcode.com/problems/single-number-ii/
 5. Flipping an Image
     :https://leetcode.com/problems/flipping-an-image/
+6. Count Number of 1 Bits.
+    :https://leetcode.com/problems/number-of-1-bits/description/
+
 */
 
 // 1
@@ -105,3 +108,33 @@ vector<vector<int>> flipAndInvertImage(vector<vector<int>> &A)
     }
     return A;
 }
+
+// 6
+class Solution
+{
+public:
+    int hammingWeightSlow(uint32_t n)
+    {
+        // T: O(32)
+        int count = 0;
+        int mask = 1;
+        for (int i = 0; i < 32; i++)
+        {
+            if (mask & n)
+                count++;
+            mask = mask << 1;
+        }
+        return count;
+    }
+    int hammingWeight(uint32_t n)
+    {
+        // T:O(m), where m is number of ones
+        int count = 0;
+        while (n)
+        {
+            n = n & (n - 1);
+            count++;
+        }
+        return count;
+    }
+};

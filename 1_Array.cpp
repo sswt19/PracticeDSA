@@ -15,6 +15,7 @@ using namespace std;
 3. Next Permutation: https://leetcode.com/problems/next-permutation/
 4. Kadane's|  Maximum Subarray sum: https://leetcode.com/problems/maximum-subarray/
 5. Stock buy and Sell: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+6. Product of Array Except Self: https://leetcode.com/problems/product-of-array-except-self/description/
 */
 
 // 1
@@ -181,3 +182,41 @@ public:
         return profit;
     }
 };
+
+// 6 Product of Array Except Self
+class ProductOfArrayExceptSelf
+{
+public:
+    vector<int> productExceptSelf(vector<int> &nums)
+    {
+
+        vector<int> ans;
+        int zeroCount = 0;
+        int mul = 1;
+        // count number zeros, and product of non zero elements
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (nums[i] == 0)
+                zeroCount++;
+            else
+                mul = mul * nums[i];
+        }
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (zeroCount > 1) // with 2 or more zero every answer will be 0
+                ans.push_back(0);
+            else if (zeroCount == 1) // with one zero
+            {
+                if (nums[i] == 0) // other than place where there is zero everything else will be zero
+                    ans.push_back(mul);
+                else
+                    ans.push_back(0);
+            }
+            else // no zeros, we will divide the product of whole array by current value at index
+                ans.push_back(mul / nums[i]);
+        }
+        return ans;
+    }
+};
+//

@@ -23,17 +23,20 @@ struct TreeNode
 1.1 Level Order Successor
 2. Level order traversal in spiral form/Zig-Zag
     :https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/description/
-3. Left View of BTree
-4. Right View Of Binary Tree
-5. Top View of Binary Tree
-6. Bottom View of Binary Tree
-7. Min Height of Binary Tree:
+3. Left & Right View of BTree
+    :https://practice.geeksforgeeks.org/problems/left-view-of-binary-tree/1
+    :https://practice.geeksforgeeks.org/problems/right-view-of-binary-tree/1
+4. Top View of Binary Tree
+    :https://practice.geeksforgeeks.org/problems/top-view-of-binary-tree/1
+5. Bottom View of Binary Tree
+    :https://practice.geeksforgeeks.org/problems/bottom-view-of-binary-tree/1
+6. Min Height of Binary Tree:
     The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
-8. Vertical Order Traversal
-9. Populate Next Right pointers of Tree
+7. Vertical Order Traversal
+8. Populate Next Right pointers of Tree
     a) using queue O(n) space :LOT
     b) using constant space :LOT
-10. Maximum Width of Binary Tree
+9. Maximum Width of Binary Tree
 */
 
 // 1 LOT
@@ -135,128 +138,146 @@ public:
     }
 };
 
-// 3 LeftView
-vector<int> leftSideView(TreeNode *root)
+// 3 Left & Right View
+class LeftRightView
 {
-    vector<int> lView;
-    if (!root)
+public:
+    // LeftView
+    vector<int> leftSideView(TreeNode *root)
+    {
+        vector<int> lView;
+        if (!root)
+            return lView;
+        queue<TreeNode *> q;
+        q.push(root);
+
+        while (!q.empty())
+        {
+            int levSize = q.size();
+            for (int i = 0; i < levSize; i++)
+            {
+                auto temp = q.front();
+                q.pop();
+                if (i == 0)
+                    lView.push_back(temp->val);
+                if (temp->left)
+                    q.push(temp->left);
+                if (temp->right)
+                    q.push(temp->right);
+            }
+        }
         return lView;
-    queue<TreeNode *> q;
-    q.push(root);
-
-    while (!q.empty())
-    {
-        int levSize = q.size();
-        for (int i = 0; i < levSize; i++)
-        {
-            auto temp = q.front();
-            q.pop();
-            if (i == 0)
-                lView.push_back(temp->val);
-            if (temp->left)
-                q.push(temp->left);
-            if (temp->right)
-                q.push(temp->right);
-        }
     }
-    return lView;
-}
 
-// 4 RightView
-vector<int> rightSideView(TreeNode *root)
-{
-    vector<int> rView;
-    if (!root)
+    // 4 RightView
+    vector<int> rightSideView(TreeNode *root)
+    {
+        vector<int> rView;
+        if (!root)
+            return rView;
+        queue<TreeNode *> q;
+        q.push(root);
+
+        while (!q.empty())
+        {
+            int levSize = q.size();
+            for (int i = 0; i < levSize; i++)
+            {
+                auto temp = q.front();
+                q.pop();
+                if (i == levSize - 1)
+                    rView.push_back(temp->val);
+                if (temp->left)
+                    q.push(temp->left);
+                if (temp->right)
+                    q.push(temp->right);
+            }
+        }
         return rView;
-    queue<TreeNode *> q;
-    q.push(root);
+    }
+};
 
-    while (!q.empty())
+// 4 Top View : there is no chance of collision
+class TopView
+{
+public:
+    vector<int> topView(TreeNode *root)
     {
-        int levSize = q.size();
-        for (int i = 0; i < levSize; i++)
+        if (!root)
+            return {};
+
+        unordered_map<int, int> nodeAtX; // No Need for vector since we want only topView node and not all nodes at postion X
+        int minX = 0, maxX = 0;          // later useful in traversing unordered_map from dist minX to maxX
+        queue<pair<TreeNode *, int>> q;  // Node and it's location in X axis
+        q.push({root, 0});
+
+        while (!q.empty())
         {
             auto temp = q.front();
             q.pop();
-            if (i == levSize - 1)
-                rView.push_back(temp->val);
-            if (temp->left)
-                q.push(temp->left);
-            if (temp->right)
-                q.push(temp->right);
+
+            minX = min(minX, temp.second);
+            maxX = max(maxX, temp.second);
+
+            if (nodeAtX.find(temp.second) == nodeAtX.end()) // level order so it will be visible from top view, once set no need to change
+                nodeAtX[temp.second] = temp.first->val;
+
+            if (temp.first->left)
+                q.push({temp.first->left, temp.second - 1});
+            if (temp.first->right)
+                q.push({temp.first->right, temp.second + 1});
         }
+        vector<int> topView(maxX - minX + 1);
+        for (int i = minX; i <= maxX; i++) // used here minX and maxX for constant time search
+            topView[i - minX] = nodeAtX[i];
+        return topView;
     }
-    return rView;
-}
+};
 
-// 5 Top View : there is no chance of collision
-vector<int> topView(TreeNode *root)
+// 5 Bottom View: Collision possible: example for X=0 both 3 and 4 can be used for bottom View
+class BottomView
 {
-    unordered_map<int, int> nodeAtX; // No Need for vector since we want only topView node and not all nodes at postion X
-    int minX = 0, maxX = 0;          // later useful in traversing unordered_map from dist minX to maxX
-    queue<pair<TreeNode *, int>> q;  // Node and it's location in X axis
-    q.push({root, 0});
-
-    while (!q.empty())
+    // we are using what is encountered last in LOT so we will use 4
+    /*
+                20
+              /    \
+            8       22
+          /   \     /   \
+        5      3 4     25
+    */
+public:
+    vector<int> bottomView(TreeNode *root)
     {
-        auto temp = q.front();
-        q.pop();
+        if (!root)
+            return {};
+        unordered_map<int, int> nodeAtX;
+        int minX = 0, maxX = 0;
+        queue<pair<TreeNode *, int>> q;
+        q.push({root, 0});
 
-        minX = min(minX, temp.second);
-        maxX = max(maxX, temp.second);
+        while (!q.empty())
+        {
+            auto temp = q.front();
+            q.pop();
 
-        if (nodeAtX.find(temp.second) == nodeAtX.end()) // level order so it will be visible from top view, once set no need to change
-            nodeAtX[temp.second] = temp.first->val;
+            minX = min(minX, temp.second);
+            maxX = max(maxX, temp.second);
 
-        if (temp.first->left)
-            q.push({temp.first->left, temp.second - 1});
-        if (temp.first->right)
-            q.push({temp.first->right, temp.second + 1});
+            nodeAtX[temp.second] = temp.first->val; // only change here, we use what is encountered last in LOT
+
+            if (temp.first->left)
+                q.push({temp.first->left, temp.second - 1});
+            if (temp.first->right)
+                q.push({temp.first->right, temp.second + 1});
+        }
+        vector<int> botView(maxX - minX + 1);
+        for (int i = minX; i <= maxX; i++)
+            botView[i - minX] = nodeAtX[i];
+        return botView;
     }
-    vector<int> topView(maxX - minX + 1);
-    for (int i = minX; i <= maxX; i++) // used here minX and maxX for constant time search
-        topView[i - minX] = nodeAtX[i];
-    return topView;
-}
+};
 
-// 6 Bottom View: Collision possible: example for X=0 both 3 and 4 can be used for bottom View
-// we are using what is encountered last in LOT so we will use 4
-/*
-            20
-          /    \
-        8       22
-      /   \     /   \
-    5      3 4     25
-*/
-vector<int> bottomView(TreeNode *root)
-{
-    unordered_map<int, int> nodeAtX;
-    int minX = 0, maxX = 0;
-    queue<pair<TreeNode *, int>> q;
-    q.push({root, 0});
-
-    while (!q.empty())
-    {
-        auto temp = q.front();
-        q.pop();
-
-        minX = min(minX, temp.second);
-        maxX = max(maxX, temp.second);
-
-        nodeAtX[temp.second] = temp.first->val; // only change here, we use what is encountered last in LOT
-
-        if (temp.first->left)
-            q.push({temp.first->left, temp.second - 1});
-        if (temp.first->right)
-            q.push({temp.first->right, temp.second + 1});
-    }
-    vector<int> botView(maxX - minX + 1);
-    for (int i = minX; i <= maxX; i++)
-        botView[i - minX] = nodeAtX[i];
-    return botView;
-}
-
-// 7 Min Height of Binary Tree
+// 6 Min Height of Binary Tree
 int minDepth(TreeNode *root)
 {
     if (!root)
@@ -284,7 +305,7 @@ int minDepth(TreeNode *root)
     return height; // will never be called
 }
 
-// 8:Vertical Order Traversal of a Binary Tree and because of below requirement code became complicated
+// 7:Vertical Order Traversal of a Binary Tree and because of below requirement code became complicated
 /*
 If two nodes have the same position,
 check the layer, the node on higher level(close to root) goes first
@@ -334,7 +355,7 @@ vector<vector<int>> verticalTraversal(TreeNode *root)
     return VertView;
 }
 
-// 9. Populate Next Right pointers of Tree
+// 8. Populate Next Right pointers of Tree
 TreeNode *connectSpaceConstant(TreeNode *root)
 {
     if (!root)
@@ -393,7 +414,7 @@ TreeNode *connectBFSQueue(TreeNode *root)
     }
     return root;
 }
-// 10
+// 9
 int widthOfBinaryTree(TreeNode *root)
 {
     if (!root)

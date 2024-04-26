@@ -27,77 +27,55 @@ typedef long long ll;
     1. Path Compression: O(log n)
     2. Rank Optimization: O(1)
 */
-
 class DSU
 {
-    int *parents;
-    int *ranks;
-    int size;
+    vector<int> parent;
+    vector<int> rank;
     int total_comps;
 
 public:
     DSU(int n)
     {
-        size = total_comps = n;
-
-        parents = new int[n];
-        ranks = new int[n];
+        total_comps = n;
+        parent.resize(n);
+        rank.resize(n, 1); // no of nodes in each set will be 1 at start
 
         for (int i = 0; i < n; i++)
-        {
-            parents[i] = -1; // each node is parent of itself at start
-            ranks[i] = 1;    // no of nodes in each set will be 1 at start
-        }
+            parent[i] = i; // each node is parent of itself at start
     }
 
-    int find(int x)
+    int find_parent(int x)
     {
-        if (parents[x] == -1) // we arrived at the super parent
+        if (parent[x] == x) // we arrived at the super parent
             return x;
 
         // path compression
-        parents[x] = find(parents[x]); // for example parents of 5,4,3,2 be 4,3,2,2 after compression parents will be 2,2,2,2
-        return parents[x];
+        parent[x] = find_parent(parent[x]); // for example parents of 5,4,3,2 be 4,3,2,2 after compression parents will be 2,2,2,2
+        return parent[x];
     }
 
-    void union_set(int x, int y)
+    void union_by_rank(int x, int y)
     {
-        int s1 = find(x);
-        int s2 = find(y);
+        int parent_x = find_parent(x);
+        int parent_y = find_parent(y);
 
-        if (s1 != s2) // if there super parents are different merge them
+        if (parent_x != parent_y) // if there super parents are different merge them
         {
             // union by rank reduces to O(1)
-            if (ranks[s1] < ranks[s2]) // join subtree of s1 to s2
+            if (rank[parent_x] < rank[parent_y]) // join subtree of s1 to s2
             {
-                parents[s1] = s2;
-                ranks[s2] += ranks[s1]; // add nodes of s1 set
-                ranks[s1] = 0;          // for convinienece no need
+                parent[parent_x] = parent_y;
+                rank[parent_y] += rank[parent_x]; // add nodes of s1 set
+                rank[parent_x] = 0;               // for convinienece no need
             }
             else // join subtree of s2 to s1
             {
-                parents[s2] = s1;
-                ranks[s1] += ranks[s2];
-                ranks[s2] = 0; // for convinienece no need
+                parent[parent_y] = parent_x;
+                rank[parent_x] += rank[parent_y];
+                rank[parent_y] = 0; // for convinienece no need
             }
             total_comps--;
         }
-    }
-
-    void print()
-    {
-        cout << "Number of elements:" << size << endl;
-        cout << "Components:" << total_comps << endl;
-
-        cout << "Parents" << endl;
-        for (int i = 0; i < size; i++)
-            cout << parents[i] << " ";
-        cout << endl;
-
-        cout << "Ranks" << endl;
-        for (int i = 0; i < size; i++)
-            cout << ranks[i] << " ";
-        cout << endl;
     }
 };
 
@@ -107,12 +85,12 @@ vector<int> findRedundantConnection(vector<vector<int>> &edges)
     auto g = DSU(edges.size() + 1);
     for (auto e : edges)
     {
-        int s1 = g.find(e[0]);
-        int s2 = g.find(e[1]);
+        int s1 = g.find_parent(e[0]);
+        int s2 = g.find_parent(e[1]);
         if (s1 == s2)
             return e;
         else
-            g.union_set(e[0], e[1]);
+            g.union_by_rank(e[0], e[1]);
     }
     return {};
 }
@@ -135,13 +113,16 @@ pair<ll, vector<vector<int>>> Kruskal(int vertices, vector<vector<int>> edges)
     ll mst = 0;
     for (auto e : edges)
     {
-        int s1 = g.find(e[0]);
-        int s2 = g.find(e[1]);
+        int s1 = g.find_parent(e[0]);
+        int s2 = g.find_parent(e[1]);
         if (s1 != s2) // they are not connected yet
         {
             mst += e[2]; // add weight to mst
             mstEdges.push_back(e);
-            g.union_set(s1, s2);
+            // MST is completed
+            if (mstEdges.size() == vertices - 1)
+                return {mst, mstEdges};
+            g.union_by_rank(s1, s2);
         }
     }
     return {mst, mstEdges};

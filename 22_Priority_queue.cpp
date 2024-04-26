@@ -14,7 +14,6 @@ typedef long long ll;
 /*
 1. Find Median from Data Stream
     url: https://leetcode.com/problems/find-median-from-data-stream/
-
 2. Sliding Window Median
     url: https://leetcode.com/problems/sliding-window-median/
 3. Maximize Capital
@@ -24,12 +23,14 @@ typedef long long ll;
 5. Kth largest element in a stream
     url: https://leetcode.com/problems/kth-largest-element-in-a-stream/
 6. K-th largest element in an unsorted array.
-    url:
+    url:https://leetcode.com/problems/kth-largest-element-in-an-array/
 7. Minimum Cost to Connect Sticks
     You can connect any two sticks of lengths x and y into one stick by paying a cost of x + y.
     You must connect all the sticks until there is only one stick remaining.
     Return the minimum cost of connecting all the given sticks into one stick in this way.
     url:https://leetcode.com/problems/minimum-cost-to-connect-sticks/
+8. Last Stone Weight
+    url:https://leetcode.com/problems/last-stone-weight/description/
 
 */
 
@@ -235,6 +236,7 @@ vector<int> findRightInterval(vector<vector<int>> &intervals)
 }
 
 // 5 Kth largest element in a stream
+// T:nlogk  S:k (size of the heap)
 class KthLargest
 {
     priority_queue<int, vector<int>, greater<int>> pq_min; // the Largest will be at last of pq, second largest will be second last and so on
@@ -245,7 +247,7 @@ public:
     {
         this->k = k;
         for (auto v : nums)
-            add(v); // use the add function implemented
+            this->add(v); // use the add function implemented
     }
 
     int add(int val)
@@ -258,7 +260,7 @@ public:
 };
 
 // 6 K-th largest element in an unsorted array.
-// nlogk time complexity
+// T:nlogk S:k
 int findKthLargest(vector<int> &nums, int k)
 {
     priority_queue<int, vector<int>, greater<int>> pq_min;
@@ -290,4 +292,27 @@ int connectSticks(vector<int> &sticks)
     }
     return cost;
 }
+
+// 8. Last Stone Weight
+// (T:nlogn, S:n)
+class LastStoneWeight
+{
+public:
+    int lastStoneWeight(vector<int> &stones)
+    {
+        priority_queue<int> pq_max;
+        for (auto s : stones)
+            pq_max.push(s);
+        while (pq_max.size() > 1) // only if there are 2 or more stones
+        {
+            auto y = pq_max.top();
+            pq_max.pop();
+            auto x = pq_max.top();
+            pq_max.pop();
+            if (y != x)
+                pq_max.push(y - x);
+        }
+        return pq_max.empty() ? 0 : pq_max.top();
+    }
+};
 //

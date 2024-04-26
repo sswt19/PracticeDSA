@@ -10,15 +10,28 @@
 using namespace std;
 
 /*
-1. Traversal        i)BFS ii)DFS
-2. Connected Components for undirected graphs       i)BFS ii)DFS
-3. Strongly connected components for directed graphs(At the end of this file)
-4. Topological Sort(DAG)                            i)BFS ii)DFS
-5. Detect Cycle
+1. Traversal
+    i)BFS ii)DFS
+
+2. Connected Components for undirected graphs
+    i)BFS ii)DFS
+
+3. Detect Cycle
     a) Undirected   i) BFS ii) DFS
     b) directed     i) BFS ii) DFS
-6. Bipartite Graph(Two sets of vertics and only edeges b/w both sets are present)
-7. Clone a Graph
+
+4. Topological Sort(DAG)
+    i)BFS ii)DFS
+
+5. Bipartite Graph(Two sets of vertics and only edeges b/w both sets are present)
+
+6. Clone a Graph
+
+7. Strongly connected components for directed graphs(At the end of this file)
+
+when to use, how to use, directed or undirected graphs
+MST and DSU only for directed graphs
+cycle in directed and undirected using BFS and DFS
 */
 class Graph
 {
@@ -31,10 +44,15 @@ public:
         if (undirected)
             adjList[v].push_back(u);
     }
-    // 1 Traversal: BFS
+    // 1 Traversal
+    // BFS
     void BFS(int source)
     {
         unordered_map<int, bool> visited;
+        BFS_helper(source, visited);
+    }
+    void BFS_helper(int source, unordered_map<int, bool> &visited)
+    {
         queue<int> q;
         // mark and start with source node
         visited[source] = true;
@@ -43,20 +61,16 @@ public:
         {
             auto temp = q.front();
             q.pop();
-            cout << temp << ",";
             // find every nbr of temp node
-            for (auto nbr : adjList[temp])
-            {
-                // node which is not visited mark it visted and push in queue
+            for (auto nbr : adjList[temp]) // node which is not visited mark it visted and push in queue
                 if (!visited[nbr])
                 {
                     visited[nbr] = true;
                     q.push(nbr);
                 }
-            }
         }
     }
-    // 1 Traversal: DFS
+    // DFS
     void DFS(int source)
     {
         unordered_map<int, bool> visited;
@@ -66,7 +80,6 @@ public:
     {
         // mark source first
         visited[source] = true;
-        cout << source << ",";
 
         // call DFS helper on every nbr which is not visited
         for (auto nbr : adjList[source])
@@ -74,60 +87,165 @@ public:
                 DFS_helper(nbr, visited);
     }
 
-    // 2 Connected Components:DFS
+    // 2 Connected Components
+    // DFS
     int connected_components_DFS()
     {
         int count = 0;
         unordered_map<int, bool> visited; // we can store the visited or the component number in hashmap
 
         for (auto p : adjList) // call on each key in adjList and all connected to key will be covered during dfs/bfs
-        {
             if (visited.find(p.first) == visited.end())
             {
                 count++;
-                cout << "Component:" << count << "-->";
                 DFS_helper(p.first, visited);
-                cout << endl;
             }
-        }
+
         return count;
     }
-    // 2 Connected Components:BFS
+    // BFS
     int connected_components_BFS()
     {
         unordered_map<int, bool> visited; // we can store the visited or the component number in hashmap
 
         int count = 0;
-        for (auto p : adjList)
-        {
+        for (auto p : adjList) // call on each key in adjList and all connected to key will be covered during dfs/bfs
             if (visited.find(p.first) == visited.end())
             {
                 count++;
-                cout << "Component:" << count << "-->";
+                BFS_helper(p.first, visited);
+            }
 
+        return count;
+    }
+
+    // 3A) Detect Cycle: Undireced Graph
+    // BFS
+    bool cycle_check_BFS()
+    {
+        unordered_map<int, int> parent; // a->b, if b is found using a then parent of b is a
+        // parent is stored because:For Ex: G:2-3 2 is marked then we go to 3 and 3's nbr 2 is already visited we will call cycle which will be wrong
+        for (auto p : adjList)
+        {
+            // check cycle in each component
+            auto node = p.first;
+            if (parent.find(node) == parent.end())
+            {
                 queue<int> q;
-                q.push(p.first);
-                visited[p.first] = true;
-
+                // mark the parent, will be used same as visited
+                parent[node] = node;
+                q.push(node);
                 while (!q.empty())
                 {
-                    auto temp = q.front();
+                    auto top = q.front();
                     q.pop();
-                    cout << temp << ", ";
-
-                    for (auto vertex : adjList[temp])
+                    for (auto nbr : adjList[top])
                     {
-                        if (visited.find(vertex) == visited.end())
+                        if (parent.find(nbr) == parent.end())
                         {
-                            visited[vertex] = true;
-                            q.push(vertex);
+                            parent[nbr] = top;
+                            q.push(nbr);
                         }
+                        else if (parent[top] != nbr) // if the nbr is not the parent of current node then there is a cycle
+                            return true;
                     }
                 }
-                cout << endl;
             }
         }
-        return count;
+        return false;
+    }
+    // DFS
+    bool dfs_isCycle(vector<int> adj[])
+    {
+        unordered_map<int, bool> visited;
+        for (auto p : adjList) // check in all components
+            if (visited.find(p.first) == visited.end() && isCycle_dfs_helper(p.first, p.first, visited))
+                return true;
+
+        return false;
+    }
+    bool isCycle_dfs_helper(int node, int parent, unordered_map<int, bool> &visited)
+    {
+        // mark it visited
+        visited[node] = true;
+        for (auto nbr : adjList[node])
+        {
+            if (visited.find(nbr) == visited.end())
+            {
+                if (isCycle_dfs_helper(nbr, node, visited))
+                    return true; // this return true very important
+            }
+            else if (nbr != parent) // if nbr is visited already and is not the parent then there is cycle
+                return true;
+        }
+        return false;
+    }
+
+    // 3B) Detect Cycle:  Directed Graph
+    // BFS
+    bool topo_BFS_Directed_Checkcycle()
+    {
+        vector<int> topOrder;
+        unordered_map<int, int> indegree; // no need of visited hashmap this will work as both indegree count and visited
+        for (auto p : adjList)
+        {
+            if (indegree.find(p.first) == indegree.end())
+                indegree[p.first] = 0;
+            for (auto nbr : p.second)
+                indegree[nbr] = indegree.find(nbr) == indegree.end() ? 1 : indegree[nbr] + 1;
+        }
+        queue<int> q;
+        for (auto p : indegree)
+            if (p.second == 0) // start with nodes which donot required by other nodes
+                q.push(p.first);
+        while (!q.empty())
+        {
+            int temp = q.front();
+            q.pop();
+            topOrder.push_back(temp);
+            for (auto nbr : adjList[temp])
+            {
+                indegree[nbr] -= 1;     // requirements for each nbr of temp decreased by 1
+                if (indegree[nbr] == 0) // it's parents are completed now we can process it
+                    q.push(nbr);
+            }
+        }
+        if (indegree.size() != topOrder.size()) // there is a cycle, it is not DAG
+            return true;
+        return false;
+    }
+    // DFS
+    bool DFS_Directed_Checkcycle_helper(int src, unordered_map<int, bool> &visited, unordered_map<int, bool> &path)
+    {
+        // mark it and add current node is in path
+        visited[src] = true;
+        path[src] = true;
+
+        for (auto nbr : adjList[src])
+        {
+            if (visited.find(nbr) == visited.end())
+            {
+                bool cyclePresent = DFS_Directed_Checkcycle_helper(nbr, visited, path);
+                if (cyclePresent)
+                    return cyclePresent;
+            }
+            else if (path.find(nbr) != path.end()) // this means nbr is already visited and there is back edge from src to nbr causing the cycle because nbr is present in path map
+                return true;
+        }
+        // every path from current node is done hence remove it
+        path.erase(src); // don't forget
+
+        return false;
+    }
+    bool DFS_Directed_Checkcycle()
+    {
+        unordered_map<int, bool> visited;
+        unordered_map<int, bool> path; // this is stored to check if there is back edge to node which is already in path
+        for (auto p : adjList)         // Check Every component
+            if (visited.find(p.first) == visited.end() && DFS_Directed_Checkcycle_helper(p.first, visited, path))
+                return true;
+
+        return false;
     }
 
     // 4 Topological Sort:BFS
@@ -189,140 +307,6 @@ public:
         topOrder.push_back(src); // for src->node edge src should be done before node and all it's children
     }
 
-    // 5 Detect Cycle
-    // Undireced Graph:BFS
-    bool cycle_check_BFS()
-    {
-        unordered_map<int, bool> visited;
-        for (auto p : adjList) // check in every component
-        {
-            if (visited.find(p.first) == visited.end())
-            {
-                visited[p.first] = true;
-                queue<pair<int, int>> q;    // stores current node and the parent through which it was stored : Example 2->3(2 was called before 3) will be stored as (3,2)
-                q.push({p.first, p.first}); // parent is stored because:For Ex: G:2-3 2 is marked then we go to 3 and 3's nbr 2 is already visited we will call cycle which will be wrong
-                while (!q.empty())
-                {
-                    pair<int, int> temp = q.front();
-                    q.pop();
-
-                    for (auto nbr : adjList[temp.first])
-                    {
-                        if (visited.find(nbr) == visited.end())
-                        {
-                            q.push({nbr, temp.first});
-                            visited[nbr] = true;
-                        }
-                        else
-                        {
-                            if (nbr != temp.second) // if the nbr is not the parent of current node then there is a cycle
-                                return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-    // Undireced Graph:DFS
-    bool DFS_helper_cycle(int start, int parent, unordered_map<int, bool> &visited)
-    {
-        // mark it visited
-        visited[start] = true;
-        // recursion
-        for (auto nbr : adjList[start])
-        {
-            if (visited.find(nbr) == visited.end())
-            {
-                if (DFS_helper_cycle(nbr, start, visited))
-                    return true;
-            }
-            else if (nbr != parent) // if nbr is not the parent then there is cycle
-                return true;
-        }
-        return false;
-    }
-    bool cycle_check_DFS()
-    {
-        unordered_map<int, bool> visited;
-        for (auto p : adjList) // check in all components
-        {
-            if (visited.find(p.first) == visited.end())
-            {
-                if (DFS_helper_cycle(p.first, p.first, visited))
-                    return true;
-            }
-        }
-        return false;
-    }
-    // Directed Graph :BFS
-    bool topo_BFS_Directed_Checkcycle()
-    {
-        vector<int> topOrder;
-        unordered_map<int, int> indegree; // no need of visited hashmap this will work as both indegree count and visited
-        for (auto p : adjList)
-        {
-            if (indegree.find(p.first) == indegree.end())
-                indegree[p.first] = 0;
-            for (auto nbr : p.second)
-                indegree[nbr] = indegree.find(nbr) == indegree.end() ? 1 : indegree[nbr] + 1;
-        }
-        queue<int> q;
-        for (auto p : indegree)
-            if (p.second == 0) // start with nodes which donot required by other nodes
-                q.push(p.first);
-        while (!q.empty())
-        {
-            int temp = q.front();
-            q.pop();
-            topOrder.push_back(temp);
-            for (auto nbr : adjList[temp])
-            {
-                indegree[nbr] -= 1;     // requirements for each nbr of temp decreased by 1
-                if (indegree[nbr] == 0) // it's parents are completed now we can process it
-                    q.push(nbr);
-            }
-        }
-        if (indegree.size() != topOrder.size()) // there is a cycle, it is not DAG
-            return true;
-        return false;
-    }
-    // Directed Graph :DFS
-    bool DFS_Directed_Checkcycle_helper(int src, unordered_map<int, bool> &visited, unordered_map<int, bool> &path)
-    {
-        visited[src] = true;
-        path[src] = true; // current node is in path
-
-        for (auto nbr : adjList[src])
-        {
-            if (visited.find(nbr) == visited.end())
-            {
-                bool cyclePresent = DFS_Directed_Checkcycle_helper(nbr, visited, path);
-                if (cyclePresent)
-                    return cyclePresent;
-            }
-            else if (path.find(nbr) != path.end()) // this means nbr is already visited and there is back edge from src to nbr causing the cycle because nbr is present in path map
-                return true;
-        }
-        path.erase(src); // every path from current node done hence remove it
-        return false;
-    }
-    bool DFS_Directed_Checkcycle()
-    {
-        unordered_map<int, bool> visited;
-        unordered_map<int, bool> path; // this is stored to check if there is back edge to node which is already in path
-        for (auto p : adjList)         // Check Every component
-        {
-            if (visited.find(p.first) == visited.end())
-            {
-                bool cyclePresent = DFS_Directed_Checkcycle_helper(p.first, visited, path);
-                if (cyclePresent)
-                    return cyclePresent;
-            }
-        }
-        return false;
-    }
     // 6 Bipartitie
     bool isBipartite_BFS()
     {

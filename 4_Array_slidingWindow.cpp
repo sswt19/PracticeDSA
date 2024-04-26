@@ -67,16 +67,14 @@ public:
 
         for (auto x : nums)
         {
-            if (marked[x] == false)
+            if (marked[x] == false) // we will find sequence which includes the number
             {
                 int cur = x;
-                while (marked.find(x) != marked.end()) // this loop finds start of sequence
+                while (marked.find(x - 1) != marked.end()) // this loop finds start of sequence, if x-1 exists only then decrease x
                     marked[x--] = true;
-                x++; // start of the sequence, we have 1 behind the sequence so add 1, x+1 is start of sequence
 
-                while (marked.find(cur) != marked.end()) // this loop finds end of sequnece
+                while (marked.find(cur + 1) != marked.end()) // this loop finds end of sequnece, if cur+1 exist only then increase cur
                     marked[cur++] = true;
-                cur--; // end of the sequence, cur does not exist so we go 1 behind which was in hashmap
 
                 streak = max(streak, cur - x + 1);
             }
